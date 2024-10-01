@@ -2,8 +2,8 @@
 
 namespace Aternos\Serializer;
 
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Json\JsonSerializer;
 use JsonSerializable;
 use ReflectionClass;
@@ -38,8 +38,8 @@ class ArraySerializer
      * Prepare serializing this object with json_encode by converting it to an array.
      * @param object $item the object to serialize
      * @return array the serialized object
-     * @throws SerializationMissingPropertyException If a required property is not set.
-     * @throws SerializationIncorrectTypeException If a non-nullable property is set to null.
+     * @throws MissingPropertyException If a required property is not set.
+     * @throws IncorrectTypeException If a non-nullable property is set to null.
      */
     public function serialize(object $item): array
     {
@@ -53,7 +53,7 @@ class ArraySerializer
 
             if (!$property->isInitialized($item)) {
                 if ($attribute->isRequired() ?? !$property->hasDefaultValue()) {
-                    throw new SerializationMissingPropertyException($property->getName());
+                    throw new MissingPropertyException($property->getName());
                 }
                 continue;
             }
@@ -61,7 +61,7 @@ class ArraySerializer
 
             $nullable = $attribute->allowsNull() ?? $property->getType()?->allowsNull() ?? true;
             if (!$nullable && $property->getValue($item) === null) {
-                throw new SerializationIncorrectTypeException($property->getName(), "not null", "null");
+                throw new IncorrectTypeException($property->getName(), "not null", "null");
             }
 
             $name = $attribute->getName() ?? $property->getName();

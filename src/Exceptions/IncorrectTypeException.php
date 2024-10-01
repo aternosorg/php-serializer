@@ -3,12 +3,9 @@
 namespace Aternos\Serializer\Exceptions;
 
 /**
- * Exception SerializationIncorrectTypeException
- *
  * An exception that is thrown when a property has an incorrect type.
- *
  */
-class SerializationIncorrectTypeException extends SerializationException
+class IncorrectTypeException extends InvalidInputException
 {
 
     /**

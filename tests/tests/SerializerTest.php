@@ -3,8 +3,8 @@
 namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\ArraySerializer;
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\SecondTestClass;
@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ArraySerializer::class)]
 #[UsesClass(PropertyJsonSerializer::class)]
 #[UsesClass(Serialize::class)]
-#[UsesClass(SerializationIncorrectTypeException::class)]
-#[UsesClass(SerializationMissingPropertyException::class)]
+#[UsesClass(IncorrectTypeException::class)]
+#[UsesClass(MissingPropertyException::class)]
 class SerializerTest extends TestCase
 {
     public function testSerialize(): void
@@ -37,7 +37,7 @@ class SerializerTest extends TestCase
     {
         $testClass = new SerializerTestClass();
         $serializer = new ArraySerializer();
-        $this->expectException(SerializationMissingPropertyException::class);
+        $this->expectException(MissingPropertyException::class);
         $serializer->serialize($testClass);
     }
 
@@ -47,7 +47,7 @@ class SerializerTest extends TestCase
         $testClass->setName('test');
         $testClass->setNotNullable(null);
         $serializer = new ArraySerializer();
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $serializer->serialize($testClass);
     }
 

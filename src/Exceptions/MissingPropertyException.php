@@ -3,14 +3,9 @@
 namespace Aternos\Serializer\Exceptions;
 
 /**
- * Exception SerializationMissingPropertyException
- *
  * An exception that is thrown when a required property is missing.
- *
- * @package Aternos\Serializer
  */
-
-class SerializationMissingPropertyException extends SerializationException
+class MissingPropertyException extends InvalidInputException
 {
     /**
      * @param string $propertyPath path to the missing property

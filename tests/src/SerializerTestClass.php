@@ -26,14 +26,29 @@ class SerializerTestClass implements \JsonSerializable
     #[Serialize(required: false)]
     protected ?TestClass $testClass;
 
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
     public function setName(string $name): void
     {
         $this->name = $name;
     }
 
+    public function getAge(): int
+    {
+        return $this->age;
+    }
+
     public function setAge(int $age): void
     {
         $this->age = $age;
+    }
+
+    public function getNotNullable(): ?string
+    {
+        return $this->notNullable;
     }
 
     public function setNotNullable(?string $notNullable): void

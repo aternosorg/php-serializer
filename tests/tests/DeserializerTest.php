@@ -3,9 +3,9 @@
 namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\ArrayDeserializer;
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
-use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
+use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
 
 #[CoversClass(ArrayDeserializer::class)]
 #[UsesClass(Serialize::class)]
-#[UsesClass(SerializationIncorrectTypeException::class)]
-#[UsesClass(SerializationMissingPropertyException::class)]
-#[UsesClass(SerializationUnsupportedTypeException::class)]
+#[UsesClass(IncorrectTypeException::class)]
+#[UsesClass(MissingPropertyException::class)]
+#[UsesClass(UnsupportedTypeException::class)]
 class DeserializerTest extends TestCase
 {
     public function testDeserialize(): void
@@ -68,7 +68,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeMissingProperty(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $this->expectException(SerializationMissingPropertyException::class);
+        $this->expectException(MissingPropertyException::class);
         $this->expectExceptionMessage("Missing property '.name' of type 'string'.");
         $deserializer->deserialize(["age" => 18]);
     }
@@ -83,7 +83,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeIncorrectDataType(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.age' to be 'int' found: 'eighteen'");
         $deserializer->deserialize([
             "name" => "test",
@@ -105,7 +105,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeOptionalNotNullableNull(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.nullable' to be 'int' found: NULL");
         $deserializer->deserialize([
             "name" => "test",
@@ -138,7 +138,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeUnionTypeString(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.boolOrInt' to be 'int|bool' found: 'not-either'");
         $deserializer->deserialize([
             "name" => "test",
@@ -193,7 +193,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeSecondClassNotArray(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.secondTestClass' to be 'Aternos\Serializer\Test\Src\SecondTestClass' found: 'y'");
         $deserializer->deserialize([
             "name" => "test",
@@ -204,7 +204,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeIntersection(): void
     {
         $deserializer = new ArrayDeserializer(IntersectionTestClass::class);
-        $this->expectException(SerializationUnsupportedTypeException::class);
+        $this->expectException(UnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
             "x" => "123"
@@ -214,7 +214,7 @@ class DeserializerTest extends TestCase
     public function testDeserializeUnionIntersection(): void
     {
         $deserializer = new ArrayDeserializer(UnionIntersectionTestClass::class);
-        $this->expectException(SerializationUnsupportedTypeException::class);
+        $this->expectException(UnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
             "x" => "123"

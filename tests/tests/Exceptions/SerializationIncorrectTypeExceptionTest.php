@@ -2,16 +2,16 @@
 
 namespace Aternos\Serializer\Test\Tests\Exceptions;
 
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(SerializationIncorrectTypeException::class)]
+#[CoversClass(IncorrectTypeException::class)]
 class SerializationIncorrectTypeExceptionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $exception = new SerializationIncorrectTypeException(
+        $exception = new IncorrectTypeException(
             ".value",
             "int",
             "test",
@@ -22,7 +22,7 @@ class SerializationIncorrectTypeExceptionTest extends TestCase
 
     public function testGetPropertyPath(): void
     {
-        $exception = new SerializationIncorrectTypeException(
+        $exception = new IncorrectTypeException(
             ".value",
             "int",
             "test",
@@ -33,7 +33,7 @@ class SerializationIncorrectTypeExceptionTest extends TestCase
 
     public function testGetExpectedType(): void
     {
-        $exception = new SerializationIncorrectTypeException(
+        $exception = new IncorrectTypeException(
             ".value",
             "int",
             "test",
@@ -44,7 +44,7 @@ class SerializationIncorrectTypeExceptionTest extends TestCase
 
     public function testGetActualValue(): void
     {
-        $exception = new SerializationIncorrectTypeException(
+        $exception = new IncorrectTypeException(
             ".value",
             "int",
             "test",

@@ -3,9 +3,9 @@
 namespace Aternos\Serializer\Json;
 
 use Aternos\Serializer\ArrayDeserializer;
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
-use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
+use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use JsonException;
 
 /**
@@ -42,9 +42,9 @@ class JsonDeserializer
      * Deserialize the data into an object
      *
      * @return T
-     * @throws SerializationIncorrectTypeException if the type of the property is incorrect
-     * @throws SerializationMissingPropertyException if a required property is missing
-     * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws MissingPropertyException if a required property is missing
+     * @throws UnsupportedTypeException if the type of the property is unsupported
      * @throws JsonException if the data is invalid json
      */
     public function deserialize(array|string $data, string $path = ""): object
@@ -52,7 +52,7 @@ class JsonDeserializer
         if (is_string($data)) {
             $data = json_decode($data, true, flags: JSON_THROW_ON_ERROR);
             if (!is_array($data)) {
-                throw new SerializationIncorrectTypeException(".", $this->class, $data);
+                throw new IncorrectTypeException(".", $this->class, $data);
             }
         }
 

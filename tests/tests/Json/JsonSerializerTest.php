@@ -7,13 +7,14 @@ use Aternos\Serializer\Serialize;
 use Aternos\Serializer\ArraySerializer;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(JsonSerializer::class)]
-#[CoversClass(Serialize::class)]
+#[UsesClass(Serialize::class)]
+#[UsesClass(ArraySerializer::class)]
 class JsonSerializerTest extends TestCase
 {
-
     public function testSerializeToJson()
     {
         $testClass = new SerializerTestClass();

@@ -2,23 +2,23 @@
 
 namespace Aternos\Serializer\Test\Tests\Exceptions;
 
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(SerializationMissingPropertyException::class)]
+#[CoversClass(MissingPropertyException::class)]
 class SerializationMissingPropertyExceptionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $exception = new SerializationMissingPropertyException(".value");
+        $exception = new MissingPropertyException(".value");
 
         $this->assertSame("Missing property '.value'.", $exception->getMessage());
     }
 
     public function testConstructWithType(): void
     {
-        $exception = new SerializationMissingPropertyException(
+        $exception = new MissingPropertyException(
             ".value",
             "int",
         );
@@ -28,7 +28,7 @@ class SerializationMissingPropertyExceptionTest extends TestCase
 
     public function testGetPropertyPath(): void
     {
-        $exception = new SerializationMissingPropertyException(
+        $exception = new MissingPropertyException(
             ".value",
             "int",
         );
@@ -38,7 +38,7 @@ class SerializationMissingPropertyExceptionTest extends TestCase
 
     public function testGetExpectedType(): void
     {
-        $exception = new SerializationMissingPropertyException(
+        $exception = new MissingPropertyException(
             ".value",
             "int",
         );

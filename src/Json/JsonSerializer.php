@@ -3,8 +3,8 @@
 namespace Aternos\Serializer\Json;
 
 use Aternos\Serializer\ArraySerializer;
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
 
 /**
  * A class that serializes objects using the Serialize attribute.
@@ -31,8 +31,8 @@ class JsonSerializer
      * Serialize this object to a JSON string.
      * @param object $item the object to serialize
      * @return string the serialized object
-     * @throws SerializationMissingPropertyException If a required property is not set.
-     * @throws SerializationIncorrectTypeException If a non-nullable property is set to null.
+     * @throws MissingPropertyException If a required property is not set.
+     * @throws IncorrectTypeException If a non-nullable property is set to null.
      */
     public function serialize(object $item): string
     {

@@ -3,9 +3,9 @@
 namespace Aternos\Serializer;
 
 use Aternos\Serializer\Exceptions\SerializationException;
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
-use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
-use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\MissingPropertyException;
+use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
@@ -46,9 +46,9 @@ class ArrayDeserializer
      * Deserialize the data into an object
      *
      * @return T
-     * @throws SerializationIncorrectTypeException if the type of the property is incorrect
-     * @throws SerializationMissingPropertyException if a required property is missing
-     * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws MissingPropertyException if a required property is missing
+     * @throws UnsupportedTypeException if the type of the property is unsupported
      */
     public function deserialize(
         array $data,
@@ -82,9 +82,9 @@ class ArrayDeserializer
      * @param ReflectionProperty $property the property to parse
      * @param Serialize $attribute the attribute of the property
      * @return mixed the attribute parsed value
-     * @throws SerializationIncorrectTypeException if the type of the property is incorrect
-     * @throws SerializationMissingPropertyException
-     * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws MissingPropertyException
+     * @throws UnsupportedTypeException if the type of the property is unsupported
      */
     protected function parseAttributeValue(
         array              $data,
@@ -97,8 +97,8 @@ class ArrayDeserializer
         $type = $property->getType();
 
         if (!array_key_exists($name, $data)) {
-            if ($attribute->isRequired() || !$property->hasDefaultValue()) {
-                throw new SerializationMissingPropertyException($path . "." . $name, $type?->getName());
+            if ($attribute->isRequired() ?? !$property->hasDefaultValue()) {
+                throw new MissingPropertyException($path . "." . $name, $type?->getName());
             }
             return $property->getDefaultValue();
         }
@@ -108,7 +108,7 @@ class ArrayDeserializer
         $nullable = $attribute->allowsNull() ?? $type?->allowsNull() ?? true;
         if ($value === null) {
             if (!$nullable) {
-                throw new SerializationIncorrectTypeException(
+                throw new IncorrectTypeException(
                     $path . "." . $name,
                     $type?->getName() ?? "not null",
                     $value
@@ -123,7 +123,7 @@ class ArrayDeserializer
         } else if ($type instanceof ReflectionUnionType) {
             $value = $this->parseUnionType($type, $value, $path, $name);
         } else if ($type instanceof ReflectionIntersectionType) {
-            throw new SerializationUnsupportedTypeException(
+            throw new UnsupportedTypeException(
                 $path . "." . $name,
                 $type,
                 'Intersection types are not supported'
@@ -141,8 +141,8 @@ class ArrayDeserializer
      * @param string $path the path to the data in the base data (used for error messages)
      * @param string $name the name of the property
      * @return mixed the parsed value
-     * @throws SerializationIncorrectTypeException if the type of the property is incorrect
-     * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws UnsupportedTypeException if the type of the property is unsupported
      */
     protected function parseUnionType(ReflectionUnionType $unionType, mixed $value, string $path, string $name): mixed
     {
@@ -157,7 +157,7 @@ class ArrayDeserializer
                     continue;
                 }
             } else if ($type instanceof ReflectionIntersectionType) {
-                throw new SerializationUnsupportedTypeException(
+                throw new UnsupportedTypeException(
                     $path . "." . $name,
                     $type,
                     'Intersection types are not supported'
@@ -165,7 +165,7 @@ class ArrayDeserializer
             }
         }
 
-        throw new SerializationIncorrectTypeException($path . "." . $name, implode('|', $allowedTypes), $value);
+        throw new IncorrectTypeException($path . "." . $name, implode('|', $allowedTypes), $value);
     }
 
     /**
@@ -176,9 +176,9 @@ class ArrayDeserializer
      * @param string $path the path to the data in the base data (used for error messages)
      * @param string $name the name of the property
      * @return mixed the parsed value
-     * @throws SerializationIncorrectTypeException if the type of the property is incorrect
-     * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
-     * @throws SerializationMissingPropertyException
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws UnsupportedTypeException if the type of the property is unsupported
+     * @throws MissingPropertyException
      */
     protected function  parseNamedType(ReflectionNamedType $type, mixed $value, string $path, string $name): mixed
     {
@@ -190,20 +190,17 @@ class ArrayDeserializer
                 "bool" => is_bool($value),
                 "mixed" => true,
                 "array" => is_array($value),
-                default => throw new SerializationUnsupportedTypeException(
-                    $path . "." . $name,
-                    $type->getName(),
-                ),
+                default => throw new UnsupportedTypeException($path . "." . $name, $type->getName()),
             };
 
             if (!$valid) {
-                throw new SerializationIncorrectTypeException($path . "." . $name, $type->getName(), $value);
+                throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
             }
             return $value;
         }
 
         if (!is_array($value)) {
-            throw new SerializationIncorrectTypeException($path . "." . $name, $type->getName(), $value);
+            throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
         }
 
         $deserializer = new static($type->getName());

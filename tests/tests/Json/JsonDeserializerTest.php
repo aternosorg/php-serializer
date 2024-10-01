@@ -2,7 +2,8 @@
 
 namespace Aternos\Serializer\Test\Tests\Json;
 
-use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\ArrayDeserializer;
+use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Json\JsonDeserializer;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\TestClass;
@@ -11,8 +12,9 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(JsonDeserializer::class)]
+#[UsesClass(ArrayDeserializer::class)]
 #[UsesClass(Serialize::class)]
-#[UsesClass(SerializationIncorrectTypeException::class)]
+#[UsesClass(IncorrectTypeException::class)]
 class JsonDeserializerTest extends TestCase
 {
     public function testDeserializeJson(): void
@@ -28,7 +30,7 @@ class JsonDeserializerTest extends TestCase
     public function testDeserializeInvalidData(): void
     {
         $deserializer = new JsonDeserializer(TestClass::class);
-        $this->expectException(SerializationIncorrectTypeException::class);
+        $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.' to be 'Aternos\Serializer\Test\Src\TestClass' found: 0");
         $deserializer->deserialize("0");
     }

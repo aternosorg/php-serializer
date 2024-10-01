@@ -3,13 +3,9 @@
 namespace Aternos\Serializer\Exceptions;
 
 /**
- * Exception SerializationUnsupportedTypeException
- *
  * An exception that is thrown when an unsupported type is encountered during (de)-serialization.
- *
- * @package Aternos\Serializer
  */
-class SerializationUnsupportedTypeException extends SerializationException
+class UnsupportedTypeException extends SerializationException
 {
     /**
      * @param string $type the name of the unsupported type
