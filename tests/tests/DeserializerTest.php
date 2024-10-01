@@ -7,6 +7,7 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestClass;
@@ -242,5 +243,85 @@ class DeserializerTest extends TestCase
             "testClass" => null
         ]);
         $this->assertNull($testClass->getSecondTestClass());
+    }
+
+    public function testDeserializeIntWithDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithoutDefault" => 1,
+            "nullableIntWithoutDefault" => 1,
+            "stringWithDefault" => "test",
+            "stringWithoutDefault" => "test",
+            "nullableStringWithoutDefault" => "test"
+        ]);
+        $this->assertTrue(isset($testClass->intWithDefault));
+        $this->assertSame(0, $testClass->intWithDefault);
+    }
+
+    public function testDeserializeIntWithoutDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithDefault" => 1,
+            "nullableIntWithoutDefault" => 1,
+            "stringWithDefault" => "test",
+            "stringWithoutDefault" => "test",
+            "nullableStringWithoutDefault" => "test"
+        ]);
+        $this->assertFalse(isset($testClass->intWithoutDefault));
+    }
+
+    public function testDeserializeNullableIntWithoutDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithDefault" => 1,
+            "intWithoutDefault" => 1,
+            "stringWithDefault" => "test",
+            "stringWithoutDefault" => "test",
+            "nullableStringWithoutDefault" => "test"
+        ]);
+        $this->assertFalse(isset($testClass->nullableIntWithoutDefault));
+    }
+
+    public function testDeserializeStringWithDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithDefault" => 1,
+            "intWithoutDefault" => 1,
+            "nullableIntWithoutDefault" => 1,
+            "stringWithoutDefault" => "test",
+            "nullableStringWithoutDefault" => "test"
+        ]);
+        $this->assertTrue(isset($testClass->stringWithDefault));
+        $this->assertSame("", $testClass->stringWithDefault);
+    }
+
+    public function testDeserializeStringWithoutDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithDefault" => 1,
+            "intWithoutDefault" => 1,
+            "nullableIntWithoutDefault" => 1,
+            "stringWithDefault" => "test",
+            "nullableStringWithoutDefault" => "test"
+        ]);
+        $this->assertFalse(isset($testClass->stringWithoutDefault));
+    }
+
+    public function testDeserializeNullableStringWithoutDefault(): void
+    {
+        $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "intWithDefault" => 1,
+            "intWithoutDefault" => 1,
+            "nullableIntWithoutDefault" => 1,
+            "stringWithDefault" => "test",
+            "stringWithoutDefault" => "test"
+        ]);
+        $this->assertFalse(isset($testClass->nullableStringWithoutDefault));
     }
 }

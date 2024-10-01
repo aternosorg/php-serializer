@@ -7,6 +7,7 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestClass;
@@ -93,6 +94,16 @@ class SerializerTest extends TestCase
                 'float' => null,
                 'array' => null,
             ],
+        ], $serializer->serialize($testClass));
+    }
+
+    public function testSerializingDefaultValueTestClass()
+    {
+        $serializer = new ArraySerializer();
+        $testClass = new DefaultValueTestClass();
+        $this->assertSame([
+            "intWithDefault" => 0,
+            "stringWithDefault" => "",
         ], $serializer->serialize($testClass));
     }
 }

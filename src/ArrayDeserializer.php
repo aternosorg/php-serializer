@@ -61,36 +61,35 @@ class ArrayDeserializer
         }
 
         foreach ($reflectionClass->getProperties() as $property) {
-            $attribute = Serialize::getAttribute($property);
-            if (!$attribute) {
-                continue;
-            }
-
-            $property->setValue($result, $this->parseAttributeValue($data, $path, $property, $attribute));
+            $this->deserializeProperty($data, $path, $property, $result);
         }
 
         return $result;
     }
 
     /**
-     * Parse the value of a property
-     *
-     * @param array $data the data to parse
-     * @param string $path the path to the data in the base input (used for error messages)
-     * @param ReflectionProperty $property the property to parse
-     * @param Serialize $attribute the attribute of the property
-     * @return mixed the attribute parsed value
+     * Deserialize a property of an object
+     * @param array $data the data to deserialize
+     * @param string $path the path to the data in the base data (used for error messages)
+     * @param ReflectionProperty $property the property to deserialize
+     * @param object $result the object to deserialize into
+     * @return void
      * @throws IncorrectTypeException if the type of the property is incorrect
-     * @throws MissingPropertyException
+     * @throws MissingPropertyException if the property is required but missing
      * @throws UnsupportedTypeException if the type of the property is unsupported
      */
-    protected function parseAttributeValue(
-        array              $data,
-        string             $path,
+    protected function deserializeProperty(
+        array $data,
+        string $path,
         ReflectionProperty $property,
-        Serialize          $attribute,
-    ): mixed
+        object $result
+    )
     {
+        $attribute = Serialize::getAttribute($property);
+        if (!$attribute) {
+            return;
+        }
+
         $name = $attribute->getName() ?? $property->getName();
         $type = $property->getType();
 
@@ -98,7 +97,14 @@ class ArrayDeserializer
             if ($attribute->isRequired() ?? !$property->hasDefaultValue()) {
                 throw new MissingPropertyException($path . "." . $name, $type?->getName());
             }
-            return $property->getDefaultValue();
+
+            if ($property->hasDefaultValue()) {
+                $property->setValue($result, $property->getDefaultValue());
+                return;
+            }
+
+            // If there is no default value and the property is not required, we can skip it
+            return;
         }
 
         $value = $data[$name];
@@ -113,7 +119,8 @@ class ArrayDeserializer
                 );
             }
 
-            return null;
+            $property->setValue($result, null);
+            return;
         }
 
         if ($type instanceof ReflectionNamedType) {
@@ -128,7 +135,7 @@ class ArrayDeserializer
             );
         }
 
-        return $value;
+        $property->setValue($result, $value);
     }
 
     /**
