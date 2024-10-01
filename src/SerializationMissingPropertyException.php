@@ -7,7 +7,7 @@ namespace Aternos\Serializer;
  *
  * An exception that is thrown when a required property is missing.
  *
- * @package Core\Serialization
+ * @package Aternos\Serializer
  */
 
 class SerializationMissingPropertyException extends SerializationException

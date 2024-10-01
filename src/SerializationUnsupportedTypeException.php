@@ -7,7 +7,7 @@ namespace Aternos\Serializer;
  *
  * An exception that is thrown when an unsupported type is encountered during (de)-serialization.
  *
- * @package Core\Serialization
+ * @package Aternos\Serializer
  */
 class SerializationUnsupportedTypeException extends SerializationException
 {

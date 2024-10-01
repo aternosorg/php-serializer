@@ -9,7 +9,7 @@ use Exception;
  *
  * An exception that is thrown when an error occurs during (de-)serialization.
  *
- * @package Core\Serialization
+ * @package Aternos\Serializer
  */
 class SerializationException extends Exception
 {

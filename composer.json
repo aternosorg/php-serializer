@@ -8,6 +8,12 @@
             "Aternos\\Serializer\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Aternos\\Serializer\\Test\\Src\\": "tests/src",
+            "Aternos\\Serializer\\Test\\Tests\\": "tests/tests"
+        }
+    },
     "authors": [
         {
             "name": "Julian Vennen",
@@ -17,5 +23,11 @@
     "require": {
         "php": ">=8.2",
         "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11"
+    },
+    "scripts": {
+        "test": "phpunit tests"
     }
 }

@@ -11,8 +11,8 @@ use ReflectionClass;
  *
  * Usage:
  * <code>
- * $serializer = new Serializer(new TestClass());
- * $data = $serializer->serialize();
+ * $serializer = new Serializer();
+ * $data = $serializer->serialize(new TestClass());
  * $json = json_encode($data);
  * </code>
  *
@@ -27,20 +27,21 @@ class Serializer
 {
     /**
      * Create a serializer from an object
-     * @param object $item the object to serialize
      */
-    public function __construct(protected object $item)
+    public function __construct()
     {
     }
 
     /**
      * Prepare serializing this object with json_encode by converting it to an array.
+     * @param object $item the object to serialize
+     * @return array the serialized object
      * @throws SerializationMissingPropertyException If a required property is not set.
      * @throws SerializationIncorrectTypeException If a non-nullable property is set to null.
      */
-    public function serialize(): array
+    public function serialize(object $item): array
     {
-        $reflectionClass = new ReflectionClass($this->item);
+        $reflectionClass = new ReflectionClass($item);
         $serializedProperties = [];
         foreach ($reflectionClass->getProperties() as $property) {
             $attribute = SerializationProperty::getAttribute($property);
@@ -48,7 +49,7 @@ class Serializer
                 continue;
             }
 
-            if (!$property->isInitialized($this->item)) {
+            if (!$property->isInitialized($item)) {
                 if ($attribute->isRequired() ?? !$property->hasDefaultValue()) {
                     throw new SerializationMissingPropertyException($property->getName());
                 }
@@ -57,17 +58,17 @@ class Serializer
 
 
             $nullable = $attribute->allowsNull() ?? $property->getType()?->allowsNull() ?? true;
-            if (!$nullable && $property->getValue($this->item) === null) {
+            if (!$nullable && $property->getValue($item) === null) {
                 throw new SerializationIncorrectTypeException($property->getName(), "not null", "null");
             }
 
             $name = $attribute->getName() ?? $property->getName();
-            $value = $property->getValue($this->item);
+            $value = $property->getValue($item);
 
             if ($value instanceof JsonSerializable) {
                 $value = $value->jsonSerialize();
             } elseif (is_object($value)) {
-                $value = (new static($value))->serialize();
+                $value = $this->serialize($value);
             }
 
             $serializedProperties[$name] = $value;
