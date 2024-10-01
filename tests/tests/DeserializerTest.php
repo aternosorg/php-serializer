@@ -245,6 +245,17 @@ class DeserializerTest extends TestCase
         $this->assertNull($testClass->getSecondTestClass());
     }
 
+    public function testDeserializeAllowNull()
+    {
+        $deserializer = new ArrayDeserializer(SerializerTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "name" => "test",
+            "age" => 15,
+            "nullable" => null
+        ]);
+        $this->assertFalse(isset($testClass->nullable));
+    }
+
     public function testDeserializeIntWithDefault(): void
     {
         $deserializer = new ArrayDeserializer(DefaultValueTestClass::class);

@@ -20,6 +20,9 @@ class SerializerTestClass implements \JsonSerializable
     #[Serialize(allowNull: false)]
     protected ?string $notNullable = "asd";
 
+    #[Serialize(required: false, allowNull: true)]
+    public string $nullable;
+
     #[Serialize(required: false)]
     protected ?SecondTestClass $secondTestClass;
 

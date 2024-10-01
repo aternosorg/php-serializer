@@ -119,7 +119,9 @@ class ArrayDeserializer
                 );
             }
 
-            $property->setValue($result, null);
+            if (!$type || $type->allowsNull()) {
+                $property->setValue($result, null);
+            }
             return;
         }
 
