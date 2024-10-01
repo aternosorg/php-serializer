@@ -15,8 +15,6 @@ use ReflectionProperty;
 use ReflectionUnionType;
 
 /**
- * Class Deserializer
- *
  * Deserializes arrays into objects using the Serialize attribute.
  *
  * Usage:

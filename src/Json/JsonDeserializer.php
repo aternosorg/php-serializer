@@ -9,8 +9,6 @@ use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use JsonException;
 
 /**
- * Class Deserializer
- *
  * Deserializes JSON into objects using the Serialize attribute.
  *
  * Usage:
