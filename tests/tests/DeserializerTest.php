@@ -2,11 +2,11 @@
 
 namespace Aternos\Serializer\Test\Tests;
 
-use Aternos\Serializer\Deserializer;
-use Aternos\Serializer\SerializationIncorrectTypeException;
-use Aternos\Serializer\SerializationMissingPropertyException;
-use Aternos\Serializer\SerializationProperty;
-use Aternos\Serializer\SerializationUnsupportedTypeException;
+use Aternos\Serializer\ArrayDeserializer;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
+use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestClass;
@@ -16,8 +16,8 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Deserializer::class)]
-#[UsesClass(SerializationProperty::class)]
+#[CoversClass(ArrayDeserializer::class)]
+#[UsesClass(Serialize::class)]
 #[UsesClass(SerializationIncorrectTypeException::class)]
 #[UsesClass(SerializationMissingPropertyException::class)]
 #[UsesClass(SerializationUnsupportedTypeException::class)]
@@ -25,7 +25,7 @@ class DeserializerTest extends TestCase
 {
     public function testDeserialize(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize(["name" => "test", "age" =>18]);
         $this->assertSame('test', $testClass->getName());
         $this->assertSame(18, $testClass->getAge());
@@ -34,7 +34,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeInvalidClass(): void
     {
-        $deserializer = new Deserializer("non-existant-class");
+        $deserializer = new ArrayDeserializer("non-existant-class");
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Class 'non-existant-class' does not exist.");
         $deserializer->deserialize([]);
@@ -42,7 +42,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeAdditionalProperties(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "age" => 18,
@@ -54,7 +54,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeRenamedProperties(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "age" => 18,
@@ -67,7 +67,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeMissingProperty(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(SerializationMissingPropertyException::class);
         $this->expectExceptionMessage("Missing property '.name' of type 'string'.");
         $deserializer->deserialize(["age" => 18]);
@@ -75,14 +75,14 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeMissingPropertyNotRequired(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize(["name" => "test"]);
         $this->assertSame('test', $testClass->getName());
     }
 
     public function testDeserializeIncorrectDataType(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(SerializationIncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.age' to be 'int' found: 'eighteen'");
         $deserializer->deserialize([
@@ -93,7 +93,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeOptionalNotNullable(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "nullable" => 0
@@ -104,7 +104,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeOptionalNotNullableNull(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(SerializationIncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.nullable' to be 'int' found: NULL");
         $deserializer->deserialize([
@@ -115,7 +115,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeUnionTypeBool(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "boolOrInt" => true
@@ -126,7 +126,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeUnionTypeInt(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "boolOrInt" => 1
@@ -137,7 +137,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeUnionTypeString(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(SerializationIncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.boolOrInt' to be 'int|bool' found: 'not-either'");
         $deserializer->deserialize([
@@ -148,7 +148,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeSecondClass(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "secondTestClass" => ["y" => 123]
@@ -159,7 +159,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeMixed(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "mixed" => ["y" => 123]
@@ -170,7 +170,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeFloat(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "float" => 1.5
@@ -181,7 +181,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeIntAsFloat(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "float" => 1
@@ -192,7 +192,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeSecondClassNotArray(): void
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(SerializationIncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.secondTestClass' to be 'Aternos\Serializer\Test\Src\SecondTestClass' found: 'y'");
         $deserializer->deserialize([
@@ -203,7 +203,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeIntersection(): void
     {
-        $deserializer = new Deserializer(IntersectionTestClass::class);
+        $deserializer = new ArrayDeserializer(IntersectionTestClass::class);
         $this->expectException(SerializationUnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
@@ -213,7 +213,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeUnionIntersection(): void
     {
-        $deserializer = new Deserializer(UnionIntersectionTestClass::class);
+        $deserializer = new ArrayDeserializer(UnionIntersectionTestClass::class);
         $this->expectException(SerializationUnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
@@ -223,7 +223,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeArray()
     {
-        $deserializer = new Deserializer(TestClass::class);
+        $deserializer = new ArrayDeserializer(TestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "age" => 15,
@@ -234,7 +234,7 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeNullableObjects()
     {
-        $deserializer = new Deserializer(SerializerTestClass::class);
+        $deserializer = new ArrayDeserializer(SerializerTestClass::class);
         $testClass = $deserializer->deserialize([
             "name" => "test",
             "age" => 15,

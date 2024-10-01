@@ -2,25 +2,25 @@
 
 namespace Aternos\Serializer\Test\Tests;
 
-use Aternos\Serializer\SerializationProperty;
+use Aternos\Serializer\Serialize;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
-#[CoversClass(SerializationProperty::class)]
-class SerializationPropertyTest extends TestCase
+#[CoversClass(Serialize::class)]
+class SerializeTest extends TestCase
 {
-    #[SerializationProperty]
+    #[Serialize]
     protected string $name = "name";
 
-    #[SerializationProperty("other_name", required: true, allowNull: false)]
+    #[Serialize("other_name", required: true, allowNull: false)]
     protected string $otherName = "other-name";
 
     protected string $nonSerializedName = "this isn't serialized";
 
     public function testConstruct(): void
     {
-        $property = new SerializationProperty(
+        $property = new Serialize(
             "name",
             true,
             true,
@@ -33,7 +33,7 @@ class SerializationPropertyTest extends TestCase
 
     public function testConstructNoParams(): void
     {
-        $property = new SerializationProperty();
+        $property = new Serialize();
 
         $this->assertNull($property->getName());
         $this->assertNull($property->isRequired());
@@ -43,7 +43,7 @@ class SerializationPropertyTest extends TestCase
     public function testGetAttribute(): void
     {
         $property = new ReflectionProperty($this, "name");
-        $attribute = SerializationProperty::getAttribute($property);
+        $attribute = Serialize::getAttribute($property);
         $this->assertNotNull($attribute);
         $this->assertNull($attribute->getName());
         $this->assertNull($attribute->isRequired());
@@ -53,7 +53,7 @@ class SerializationPropertyTest extends TestCase
     public function testGetAttributeOtherName(): void
     {
         $property = new ReflectionProperty($this, "otherName");
-        $attribute = SerializationProperty::getAttribute($property);
+        $attribute = Serialize::getAttribute($property);
         $this->assertNotNull($attribute);
         $this->assertSame("other_name", $attribute->getName());
         $this->assertTrue($attribute->isRequired());
@@ -63,7 +63,7 @@ class SerializationPropertyTest extends TestCase
     public function testGetAttributeNone(): void
     {
         $property = new ReflectionProperty($this, "nonSerializedName");
-        $attribute = SerializationProperty::getAttribute($property);
+        $attribute = Serialize::getAttribute($property);
         $this->assertNull($attribute);
     }
 }

@@ -6,7 +6,7 @@ use Attribute;
 use ReflectionProperty;
 
 /**
- * Attribute SerializationProperty
+ * Attribute Serialize
  *
  * Used to mark a property for (de-)serialization.
  *
@@ -16,7 +16,7 @@ use ReflectionProperty;
  * - allowNull: whether the field can be null (defaults to true unless the property has a non-nullable type)
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
-class SerializationProperty
+class Serialize
 {
     public static function getAttribute(ReflectionProperty $property): ?self
     {

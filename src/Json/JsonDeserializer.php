@@ -2,16 +2,16 @@
 
 namespace Aternos\Serializer\Json;
 
-use Aternos\Serializer\Deserializer;
-use Aternos\Serializer\SerializationIncorrectTypeException;
-use Aternos\Serializer\SerializationMissingPropertyException;
-use Aternos\Serializer\SerializationUnsupportedTypeException;
+use Aternos\Serializer\ArrayDeserializer;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
 use JsonException;
 
 /**
  * Class Deserializer
  *
- * Deserializes JSON into objects using the SerializationProperty attribute.
+ * Deserializes JSON into objects using the Serialize attribute.
  *
  * Usage:
  * ```php
@@ -19,11 +19,25 @@ use JsonException;
  * $object = $deserializer->deserialize('{"name":"test","age":18}');
  * ```
  *
- * @see SerializationProperty
+ * @see Serialize
  * @template T
  */
-class JsonDeserializer extends Deserializer
+class JsonDeserializer
 {
+    protected ArrayDeserializer $arrayDeserializer;
+
+    /**
+     * Create a deserializer for a class
+     *
+     * @param class-string<T> $class the class to deserialize into
+     */
+    public function __construct(
+        protected string $class,
+    )
+    {
+        $this->arrayDeserializer = new ArrayDeserializer($class);
+    }
+
     /**
      * Deserialize the data into an object
      *
@@ -42,6 +56,6 @@ class JsonDeserializer extends Deserializer
             }
         }
 
-        return parent::deserialize($data, $path);
+        return $this->arrayDeserializer->deserialize($data, $path);
     }
 }

@@ -2,10 +2,10 @@
 
 namespace Aternos\Serializer\Test\Src;
 
-use Aternos\Serializer\SerializationProperty;
+use Aternos\Serializer\Serialize;
 
 class UnionIntersectionTestClass
 {
-    #[SerializationProperty]
+    #[Serialize]
     protected bool|(\Throwable&\Iterator) $x;
 }

@@ -12,17 +12,17 @@ composer require aternos/serializer
 
 ### Setup
 
-Add the SerializationProperty attribute the properties you want to serialize.
+Add the Serialize attribute the properties you want to serialize.
 You can optionally specify the serialized name of the property, whether it is required, or whether it allows null values.
 ```php
 
 class ExampleClass {
     public function __construct(
-        #[SerializationProperty]
+        #[Serialize]
         protected string $name,
-        #[SerializationProperty(required: false)]
+        #[Serialize(required: false)]
         protected int $age = 0,
-        #[SerializationProperty(name: "last_name")]
+        #[Serialize(name: "last_name")]
         protected ?string $lastName = null
     ) {
     
@@ -33,9 +33,10 @@ class ExampleClass {
 ### Serialization
 
 Now you can serialize and deserialize objects of this class:
+
 ```php
 $example = new ExampleClass("John", 42, "Doe");
-$serializer = new \Aternos\Serializer\Serializer();
+$serializer = new \Aternos\Serializer\ArraySerializer();
 $serialized = $serializer->serialize($example);
 // $serialized is now ["name" => "John", "age" => 42, "last_name" => "Doe"]
 ```
@@ -50,9 +51,10 @@ $serialized = $jsonSerializer->serializeToJson($example);
 
 ### Deserialization
 To deserialize an object, you can use the `Deserializer` class:
+
 ```php
 $data = ["name" => "John", "age" => 42, "last_name" => "Doe"];
-$deserializer = new \Aternos\Serializer\Deserializer(ExampleClass::class);
+$deserializer = new \Aternos\Serializer\ArrayDeserializer(ExampleClass::class);
 $example = $deserializer->deserialize($data);
 ```
 
@@ -71,11 +73,11 @@ class ExampleClass implements \JsonSerializable {
     use \Aternos\Serializer\PropertyJsonSerializer;
     
     public function __construct(
-        #[SerializationProperty]
+        #[Serialize]
         protected string $name,
-        #[SerializationProperty(required: false)]
+        #[Serialize(required: false)]
         protected int $age = 0,
-        #[SerializationProperty(name: "last_name")]
+        #[Serialize(name: "last_name")]
         protected ?string $lastName = null
     ) {
     

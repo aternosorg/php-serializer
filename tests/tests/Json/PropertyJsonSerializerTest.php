@@ -2,11 +2,11 @@
 
 namespace Aternos\Serializer\Test\Tests\Json;
 
+use Aternos\Serializer\ArraySerializer;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
-use Aternos\Serializer\SerializationIncorrectTypeException;
-use Aternos\Serializer\SerializationMissingPropertyException;
-use Aternos\Serializer\SerializationProperty;
-use Aternos\Serializer\Serializer;
+use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -14,8 +14,8 @@ use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(PropertyJsonSerializer::class)]
-#[UsesClass(Serializer::class)]
-#[UsesClass(SerializationProperty::class)]
+#[UsesClass(ArraySerializer::class)]
+#[UsesClass(Serialize::class)]
 #[UsesClass(SerializationIncorrectTypeException::class)]
 #[UsesClass(SerializationMissingPropertyException::class)]
 class PropertyJsonSerializerTest extends TestCase

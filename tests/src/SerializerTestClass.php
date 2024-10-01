@@ -3,27 +3,27 @@
 namespace Aternos\Serializer\Test\Src;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
-use Aternos\Serializer\SerializationProperty;
+use Aternos\Serializer\Serialize;
 
 class SerializerTestClass implements \JsonSerializable
 {
     use PropertyJsonSerializer;
 
-    #[SerializationProperty]
+    #[Serialize]
     protected string $name;
 
-    #[SerializationProperty(required: true)]
+    #[Serialize(required: true)]
     protected int $age = 0;
 
     protected string $notAJsonField = "test";
 
-    #[SerializationProperty(allowNull: false)]
+    #[Serialize(allowNull: false)]
     protected ?string $notNullable = "asd";
 
-    #[SerializationProperty(required: false)]
+    #[Serialize(required: false)]
     protected ?SecondTestClass $secondTestClass;
 
-    #[SerializationProperty(required: false)]
+    #[Serialize(required: false)]
     protected ?TestClass $testClass;
 
     public function setName(string $name): void

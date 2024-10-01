@@ -2,12 +2,14 @@
 
 namespace Aternos\Serializer;
 
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
 use Aternos\Serializer\Json\JsonSerializer;
 use JsonSerializable;
 use ReflectionClass;
 
 /**
- * A class that serializes objects using the SerializationProperty attribute.
+ * A class that serializes objects using the Serialize attribute.
  *
  * Usage:
  * <code>
@@ -20,10 +22,10 @@ use ReflectionClass;
  * a SerializationMissingPropertyException will be thrown.
  * If a property is null and marked as not nullable, a SerializationIncorrectTypeException will be thrown.
  *
- * @see SerializationProperty
+ * @see Serialize
  * @see JsonSerializer
  */
-class Serializer
+class ArraySerializer
 {
     /**
      * Create a serializer from an object
@@ -44,7 +46,7 @@ class Serializer
         $reflectionClass = new ReflectionClass($item);
         $serializedProperties = [];
         foreach ($reflectionClass->getProperties() as $property) {
-            $attribute = SerializationProperty::getAttribute($property);
+            $attribute = Serialize::getAttribute($property);
             if (!$attribute) {
                 continue;
             }

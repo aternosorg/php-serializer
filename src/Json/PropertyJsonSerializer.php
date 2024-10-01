@@ -2,12 +2,12 @@
 
 namespace Aternos\Serializer\Json;
 
-use Aternos\Serializer\SerializationIncorrectTypeException;
-use Aternos\Serializer\SerializationMissingPropertyException;
-use Aternos\Serializer\Serializer;
+use Aternos\Serializer\ArraySerializer;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
 
 /**
- * A trait that implements JsonSerializable for classes that use the SerializationProperty attribute.
+ * A trait that implements JsonSerializable for classes that use the Serialize attribute.
  *
  * Usage:
  * <code>
@@ -15,12 +15,12 @@ use Aternos\Serializer\Serializer;
  * {
  *   use PropertyJsonSerializer;
  *
- *   #[SerializationProperty]
+ *   #[Serialize]
  *   protected string $name;
  * }
  * </code>
  *
- * @see SerializationProperty
+ * @see Serialize
  */
 trait PropertyJsonSerializer
 {
@@ -31,6 +31,6 @@ trait PropertyJsonSerializer
      */
     public function jsonSerialize(): array
     {
-        return (new Serializer())->serialize($this);
+        return (new ArraySerializer())->serialize($this);
     }
 }

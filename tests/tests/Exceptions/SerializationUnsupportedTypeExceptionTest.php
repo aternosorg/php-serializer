@@ -1,8 +1,8 @@
 <?php
 
-namespace Aternos\Serializer\Test\Tests;
+namespace Aternos\Serializer\Test\Tests\Exceptions;
 
-use Aternos\Serializer\SerializationUnsupportedTypeException;
+use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace Aternos\Serializer\Test\Tests;
+namespace Aternos\Serializer\Test\Tests\Exceptions;
 
-use Aternos\Serializer\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

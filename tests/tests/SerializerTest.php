@@ -2,11 +2,11 @@
 
 namespace Aternos\Serializer\Test\Tests;
 
+use Aternos\Serializer\ArraySerializer;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
-use Aternos\Serializer\SerializationIncorrectTypeException;
-use Aternos\Serializer\SerializationMissingPropertyException;
-use Aternos\Serializer\SerializationProperty;
-use Aternos\Serializer\Serializer;
+use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestClass;
@@ -14,9 +14,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Serializer::class)]
+#[CoversClass(ArraySerializer::class)]
 #[UsesClass(PropertyJsonSerializer::class)]
-#[UsesClass(SerializationProperty::class)]
+#[UsesClass(Serialize::class)]
 #[UsesClass(SerializationIncorrectTypeException::class)]
 #[UsesClass(SerializationMissingPropertyException::class)]
 class SerializerTest extends TestCase
@@ -25,7 +25,7 @@ class SerializerTest extends TestCase
     {
         $testClass = new SerializerTestClass();
         $testClass->setName('test');
-        $serializer = new Serializer();
+        $serializer = new ArraySerializer();
         $this->assertSame([
             "name" => "test",
             "age" => 0,
@@ -36,7 +36,7 @@ class SerializerTest extends TestCase
     public function testSerializeNoName(): void
     {
         $testClass = new SerializerTestClass();
-        $serializer = new Serializer();
+        $serializer = new ArraySerializer();
         $this->expectException(SerializationMissingPropertyException::class);
         $serializer->serialize($testClass);
     }
@@ -46,7 +46,7 @@ class SerializerTest extends TestCase
         $testClass = new SerializerTestClass();
         $testClass->setName('test');
         $testClass->setNotNullable(null);
-        $serializer = new Serializer();
+        $serializer = new ArraySerializer();
         $this->expectException(SerializationIncorrectTypeException::class);
         $serializer->serialize($testClass);
     }
@@ -58,7 +58,7 @@ class SerializerTest extends TestCase
         $secondClass = new SecondTestClass();
         $secondClass->setY(1);
         $testClass->setSecondTestClass($secondClass);
-        $serializer = new Serializer();
+        $serializer = new ArraySerializer();
         $this->assertSame([
             'name' => 'test',
             'age' => 0,
@@ -77,7 +77,7 @@ class SerializerTest extends TestCase
         $otherTestClass->setName('test');
         $otherTestClass->setNullable(1);
         $testClass->setTestClass($otherTestClass);
-        $serializer = new Serializer();
+        $serializer = new ArraySerializer();
         $this->assertSame([
             'name' => 'test',
             'age' => 0,

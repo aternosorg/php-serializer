@@ -1,6 +1,6 @@
 <?php
 
-namespace Aternos\Serializer;
+namespace Aternos\Serializer\Exceptions;
 
 use Exception;
 

@@ -2,6 +2,10 @@
 
 namespace Aternos\Serializer;
 
+use Aternos\Serializer\Exceptions\SerializationException;
+use Aternos\Serializer\Exceptions\SerializationIncorrectTypeException;
+use Aternos\Serializer\Exceptions\SerializationMissingPropertyException;
+use Aternos\Serializer\Exceptions\SerializationUnsupportedTypeException;
 use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
@@ -13,7 +17,7 @@ use ReflectionUnionType;
 /**
  * Class Deserializer
  *
- * Deserializes arrays into objects using the SerializationProperty attribute.
+ * Deserializes arrays into objects using the Serialize attribute.
  *
  * Usage:
  * ```php
@@ -21,10 +25,10 @@ use ReflectionUnionType;
  * $object = $deserializer->deserialize(["name" => "test", "age" => 18]);
  * ```
  *
- * @see SerializationProperty
+ * @see Serialize
  * @template T
  */
-class Deserializer
+class ArrayDeserializer
 {
 
     /**
@@ -59,7 +63,7 @@ class Deserializer
         }
 
         foreach ($reflectionClass->getProperties() as $property) {
-            $attribute = SerializationProperty::getAttribute($property);
+            $attribute = Serialize::getAttribute($property);
             if (!$attribute) {
                 continue;
             }
@@ -76,17 +80,17 @@ class Deserializer
      * @param array $data the data to parse
      * @param string $path the path to the data in the base input (used for error messages)
      * @param ReflectionProperty $property the property to parse
-     * @param SerializationProperty $attribute the attribute of the property
+     * @param Serialize $attribute the attribute of the property
      * @return mixed the attribute parsed value
      * @throws SerializationIncorrectTypeException if the type of the property is incorrect
      * @throws SerializationMissingPropertyException
      * @throws SerializationUnsupportedTypeException if the type of the property is unsupported
      */
     protected function parseAttributeValue(
-        array $data,
-        string $path,
-        ReflectionProperty    $property,
-        SerializationProperty $attribute,
+        array              $data,
+        string             $path,
+        ReflectionProperty $property,
+        Serialize          $attribute,
     ): mixed
     {
         $name = $attribute->getName() ?? $property->getName();

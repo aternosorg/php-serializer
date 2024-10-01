@@ -2,11 +2,11 @@
 
 namespace Aternos\Serializer\Test\Src;
 
-use Aternos\Serializer\SerializationProperty;
+use Aternos\Serializer\Serialize;
 
 class SecondTestClass
 {
-    #[SerializationProperty]
+    #[Serialize]
     protected int $y;
 
     public function getY(): int

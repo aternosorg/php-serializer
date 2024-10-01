@@ -2,10 +2,10 @@
 
 namespace Aternos\Serializer\Test\Src;
 
-use Aternos\Serializer\SerializationProperty;
+use Aternos\Serializer\Serialize;
 
 class IntersectionTestClass
 {
-    #[SerializationProperty]
+    #[Serialize]
     protected \Throwable&\Iterator $x;
 }
