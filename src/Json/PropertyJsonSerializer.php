@@ -11,7 +11,7 @@ use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use JsonException;
 
 /**
- * A trait that implements JsonSerializable for classes that use the Serialize attribute.
+ * A trait that implements JsonSerializable for classes that use the Serialize attribute and adds methods for deserialization.
  *
  * Usage:
  * <code>

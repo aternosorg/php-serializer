@@ -9,7 +9,7 @@ use JsonSerializable;
 use ReflectionClass;
 
 /**
- * A class that serializes objects using the Serialize attribute.
+ * A class that serializes objects into arrays using the Serialize attribute.
  *
  * Usage:
  * <code>
