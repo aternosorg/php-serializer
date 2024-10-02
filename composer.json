@@ -1,19 +1,8 @@
 {
     "name": "aternos/serializer",
     "description": "A PHP library for (de-)serialization using attributes and reflection",
-    "type": "library",
     "license": "MIT",
-    "autoload": {
-        "psr-4": {
-            "Aternos\\Serializer\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Aternos\\Serializer\\Test\\Src\\": "tests/src",
-            "Aternos\\Serializer\\Test\\Tests\\": "tests/tests"
-        }
-    },
+    "type": "library",
     "authors": [
         {
             "name": "Julian Vennen",
@@ -26,6 +15,17 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11"
+    },
+    "autoload": {
+        "psr-4": {
+            "Aternos\\Serializer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Aternos\\Serializer\\Test\\Src\\": "tests/src",
+            "Aternos\\Serializer\\Test\\Tests\\": "tests/tests"
+        }
     },
     "scripts": {
         "test": "phpunit --configuration phpunit.xml --testdox"
