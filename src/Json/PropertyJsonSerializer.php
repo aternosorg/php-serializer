@@ -3,7 +3,6 @@
 namespace Aternos\Serializer\Json;
 
 use Aternos\Serializer\ArraySerializer;
-use Aternos\Serializer\Exceptions\SerializationException;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\InvalidInputException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;

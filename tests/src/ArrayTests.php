@@ -6,6 +6,7 @@ use Aternos\Serializer\Serialize;
 
 class ArrayTests
 {
+    /** @noinspection PhpMissingFieldTypeInspection */
     #[Serialize(itemType: BuiltInTypeTestClass::class)]
     public $untypedArray = [];
 

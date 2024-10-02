@@ -4,8 +4,9 @@ namespace Aternos\Serializer\Test\Src;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
+use JsonSerializable;
 
-class TestClass implements \JsonSerializable
+class TestClass implements JsonSerializable
 {
     use PropertyJsonSerializer;
 

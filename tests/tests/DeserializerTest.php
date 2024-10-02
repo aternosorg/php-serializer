@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 namespace Aternos\Serializer\Test\Tests;
 
@@ -38,9 +38,9 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeInvalidClass(): void
     {
-        $deserializer = new ArrayDeserializer("non-existant-class");
+        $deserializer = new ArrayDeserializer("non-existent-class");
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Class 'non-existant-class' does not exist.");
+        $this->expectExceptionMessage("Class 'non-existent-class' does not exist.");
         $deserializer->deserialize([]);
     }
 

@@ -4,8 +4,9 @@ namespace Aternos\Serializer\Test\Src;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
+use JsonSerializable;
 
-class SerializerTestClass implements \JsonSerializable
+class SerializerTestClass implements JsonSerializable
 {
     use PropertyJsonSerializer;
 
@@ -15,6 +16,7 @@ class SerializerTestClass implements \JsonSerializable
     #[Serialize(required: true)]
     protected int $age = 0;
 
+    /** @noinspection PhpUnused */
     protected string $notAJsonField = "test";
 
     #[Serialize(allowNull: false)]
@@ -44,11 +46,6 @@ class SerializerTestClass implements \JsonSerializable
         return $this->age;
     }
 
-    public function setAge(int $age): void
-    {
-        $this->age = $age;
-    }
-
     public function getNotNullable(): ?string
     {
         return $this->notNullable;
@@ -67,11 +64,6 @@ class SerializerTestClass implements \JsonSerializable
     public function setSecondTestClass(?SecondTestClass $secondTestClass): void
     {
         $this->secondTestClass = $secondTestClass;
-    }
-
-    public function getTestClass(): ?TestClass
-    {
-        return $this->testClass;
     }
 
     public function setTestClass(?TestClass $testClass): void
