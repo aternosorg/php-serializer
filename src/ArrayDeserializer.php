@@ -83,7 +83,7 @@ class ArrayDeserializer
         string $path,
         ReflectionProperty $property,
         object $result
-    )
+    ): void
     {
         $attribute = Serialize::getAttribute($property);
         if (!$attribute) {
