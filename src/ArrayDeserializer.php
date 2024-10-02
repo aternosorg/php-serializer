@@ -191,12 +191,15 @@ class ArrayDeserializer
     {
         if ($type->isBuiltin()) {
             $valid = match ($type->getName()) {
+                "bool" => is_bool($value),
                 "int" => is_int($value),
                 "float" => is_float($value) || is_int($value),
                 "string" => is_string($value),
-                "bool" => is_bool($value),
                 "mixed" => true,
                 "array" => is_array($value),
+                "object" => is_object($value),
+                "false" => $value === false,
+                "true" => $value === true,
                 default => throw new UnsupportedTypeException($path . "." . $name, $type->getName()),
             };
 
@@ -210,7 +213,11 @@ class ArrayDeserializer
             throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
         }
 
-        $deserializer = new static($type->getName());
+        if ($type->getName() === "self") {
+            $deserializer = $this;
+        } else {
+            $deserializer = new static($type->getName());
+        }
         return $deserializer->deserialize($value, $path . "." . $name);
     }
 }

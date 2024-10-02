@@ -7,6 +7,7 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
@@ -334,5 +335,89 @@ class DeserializerTest extends TestCase
             "stringWithoutDefault" => "test"
         ]);
         $this->assertFalse(isset($testClass->nullableStringWithoutDefault));
+    }
+
+    public function testDeserializeNullType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "null" => null
+        ]);
+        $this->assertNull($testClass->null);
+    }
+
+    public function testDeserializeIntType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "int" => 1
+        ]);
+        $this->assertSame(1, $testClass->int);
+    }
+
+    public function testDeserializeFloatType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "float" => 1.5
+        ]);
+        $this->assertSame(1.5, $testClass->float);
+    }
+
+    public function testDeserializeStringType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "string" => "test"
+        ]);
+        $this->assertSame("test", $testClass->string);
+    }
+
+    public function testDeserializeArrayType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "array" => [1, 2, 3]
+        ]);
+        $this->assertSame([1, 2, 3], $testClass->array);
+    }
+
+    public function testDeserializeObjectType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "object" => (object)["key" => "value"]
+        ]);
+        $this->assertEquals((object)["key" => "value"], $testClass->object);
+    }
+
+    public function testDeserializeSelfType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "self" => [
+                "int" => 1,
+            ]
+        ]);
+        $this->assertInstanceOf(BuiltInTypeTestClass::class, $testClass->self);
+        $this->assertSame(1, $testClass->self->int);
+    }
+
+    public function testDeserializeFalseType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "false" => false
+        ]);
+        $this->assertFalse($testClass->false);
+    }
+
+    public function testDeserializeTrueType(): void
+    {
+        $deserializer = new ArrayDeserializer(BuiltInTypeTestClass::class);
+        $testClass = $deserializer->deserialize([
+            "true" => true
+        ]);
+        $this->assertTrue($testClass->true);
     }
 }
