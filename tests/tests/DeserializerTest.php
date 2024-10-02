@@ -458,4 +458,17 @@ class DeserializerTest extends TestCase
         $expected->int = 1;
         $this->assertEquals([$expected], $testClass->typedArray);
     }
+
+    public function testDeserializeTypedArrayPreservesKeys(): void
+    {
+        $deserializer = new ArrayDeserializer(ArrayTests::class);
+        $testClass = $deserializer->deserialize([
+            "typedArray" => [
+                "test" => ["int" => 1]
+            ]
+        ]);
+        $expected = new BuiltInTypeTestClass();
+        $expected->int = 1;
+        $this->assertEquals(["test" => $expected], $testClass->typedArray);
+    }
 }

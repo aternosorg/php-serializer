@@ -161,9 +161,10 @@ protected string $c;
 ```
 
 #### Item Type
-This option can be used to specify the type of the items in an array.
-It allows the deserializer to convert objects in the array to the correct type.
-If this is not set, items will not be converted to any type.
+This option can be used to specify the type of the items in an array. It allows the deserializer to convert
+objects in the array to the correct type. If this is not set, items will not be converted to any type.
+
+Array keys are preserved during the conversion.
 
 ```php
 #[Serialize(itemType: ExampleClass::class)]
