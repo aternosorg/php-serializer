@@ -141,6 +141,11 @@ class ArrayDeserializer
             );
         }
 
+        if (is_array($value) && $attribute->itemType() !== null) {
+            $deserializer = new static($attribute->itemType());
+            $value = array_map(fn($item) => $deserializer->deserialize($item, $path . "." . $name), $value);
+        }
+
         $property->setValue($result, $value);
     }
 
@@ -189,9 +194,14 @@ class ArrayDeserializer
      * @return mixed the parsed value
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws UnsupportedTypeException if the type of the property is unsupported
-     * @throws MissingPropertyException
+     * @throws MissingPropertyException if a required property is missing
      */
-    protected function  parseNamedType(ReflectionNamedType $type, mixed $value, string $path, string $name): mixed
+    protected function  parseNamedType(
+        ReflectionNamedType $type,
+        mixed               $value,
+        string              $path,
+        string              $name
+    ): mixed
     {
         if ($type->isBuiltin()) {
             $valid = match ($type->getName()) {
@@ -210,6 +220,7 @@ class ArrayDeserializer
             if (!$valid) {
                 throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
             }
+
             return $value;
         }
 

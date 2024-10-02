@@ -8,6 +8,7 @@ A PHP library for (de-)serialization using attributes and reflection.
   - [Name](#name)
   - [Required](#required)
   - [Allow Null](#allow-null)
+  - [Item Type](#item-type)
 - [Exceptions](#exceptions)
   - [SerializationException](#serializationexception)
   - [InvalidInputException](#invalidinputexception)
@@ -157,6 +158,21 @@ protected string $c;
 // ^ allows null
 // If not set in the serialized data, the property is not initialized
 // Accessing it before initialization will result in a fatal PHP error
+```
+
+#### Item Type
+This option can be used to specify the type of the items in an array.
+It allows the deserializer to convert objects in the array to the correct type.
+If this is not set, items will not be converted to any type.
+
+```php
+#[Serialize(itemType: ExampleClass::class)]
+protected array $examples;
+// ^ items in the array will be converted to ExampleClass
+
+#[Serialize]
+protected array $otherExamples;
+// ^ items in the array will not be converted
 ```
 
 ### Exceptions

@@ -6,14 +6,7 @@ use Attribute;
 use ReflectionProperty;
 
 /**
- * Attribute Serialize
- *
  * Used to mark a property for (de-)serialization.
- *
- * You can specify the following options:
- * - name: the name of the field in the serialized data (defaults to the property name)
- * - required: whether the field is required (defaults to false if the property has a default value)
- * - allowNull: whether the field can be null (defaults to true unless the property has a non-nullable type)
  */
 #[Attribute(Attribute::TARGET_PROPERTY)]
 class Serialize
@@ -28,10 +21,17 @@ class Serialize
         return $attribute[0]->newInstance();
     }
 
+    /**
+     * @param string|null $name The name of the field in the serialized data
+     * @param bool|null $required Whether the field is required
+     * @param bool|null $allowNull Whether the field can be null
+     * @param class-string|null $itemType The type of the items in the array
+     */
     public function __construct(
         protected ?string $name = null,
         protected ?bool   $required = null,
         protected ?bool   $allowNull = null,
+        protected ?string $itemType = null,
     )
     {
     }
@@ -49,5 +49,13 @@ class Serialize
     public function allowsNull(): ?bool
     {
         return $this->allowNull;
+    }
+
+    /**
+     * @return class-string|null
+     */
+    public function itemType(): ?string
+    {
+        return $this->itemType;
     }
 }

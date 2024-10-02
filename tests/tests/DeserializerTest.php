@@ -7,6 +7,7 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\ArrayTests;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
@@ -419,5 +420,42 @@ class DeserializerTest extends TestCase
             "true" => true
         ]);
         $this->assertTrue($testClass->true);
+    }
+
+    public function testDeserializeUntypedArray(): void
+    {
+        $deserializer = new ArrayDeserializer(ArrayTests::class);
+        $testClass = $deserializer->deserialize([
+            "untypedArray" => [
+                ["int" => 1]
+            ]
+        ]);
+        $expected = new BuiltInTypeTestClass();
+        $expected->int = 1;
+        $this->assertEquals([$expected], $testClass->untypedArray);
+    }
+
+    public function testDeserializeArrayWithoutItemType(): void
+    {
+        $deserializer = new ArrayDeserializer(ArrayTests::class);
+        $testClass = $deserializer->deserialize([
+            "array" => [
+                ["int" => 1]
+            ]
+        ]);
+        $this->assertEquals([["int" => 1]], $testClass->array);
+    }
+
+    public function testDeserializeTypedArray(): void
+    {
+        $deserializer = new ArrayDeserializer(ArrayTests::class);
+        $testClass = $deserializer->deserialize([
+            "typedArray" => [
+                ["int" => 1]
+            ]
+        ]);
+        $expected = new BuiltInTypeTestClass();
+        $expected->int = 1;
+        $this->assertEquals([$expected], $testClass->typedArray);
     }
 }
