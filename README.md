@@ -90,7 +90,7 @@ try {
 ```
 
 ### The Serialize Attribute
-The serialize attribute can be used to configure the serialization of a property.
+The `Serialize` attribute can be used to configure the serialization of a property.
 It has the following options:
 
 #### Name
