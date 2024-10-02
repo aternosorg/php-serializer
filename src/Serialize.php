@@ -54,7 +54,7 @@ class Serialize
     /**
      * @return class-string|null
      */
-    public function itemType(): ?string
+    public function getItemType(): ?string
     {
         return $this->itemType;
     }

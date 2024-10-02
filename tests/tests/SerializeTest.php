@@ -3,6 +3,7 @@
 namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\TestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
@@ -65,5 +66,11 @@ class SerializeTest extends TestCase
         $property = new ReflectionProperty($this, "nonSerializedName");
         $attribute = Serialize::getAttribute($property);
         $this->assertNull($attribute);
+    }
+
+    public function testGetItemType(): void
+    {
+        $property = new Serialize(itemType: TestClass::class);
+        $this->assertSame(TestClass::class, $property->getItemType());
     }
 }

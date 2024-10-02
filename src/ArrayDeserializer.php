@@ -141,8 +141,8 @@ class ArrayDeserializer
             );
         }
 
-        if (is_array($value) && $attribute->itemType() !== null) {
-            $deserializer = new static($attribute->itemType());
+        if (is_array($value) && $attribute->getItemType() !== null) {
+            $deserializer = new static($attribute->getItemType());
             $value = array_map(fn($item) => $deserializer->deserialize($item, $path . "." . $name), $value);
         }
 
