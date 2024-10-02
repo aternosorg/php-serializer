@@ -7,7 +7,7 @@ use Exception;
 /**
  * An exception that is thrown when an error occurs during (de-)serialization.
  */
-class SerializationException extends Exception
+abstract class SerializationException extends Exception
 {
 
 }
