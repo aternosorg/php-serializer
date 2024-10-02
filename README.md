@@ -100,11 +100,11 @@ This option can be used to specify whether the property is required in the seria
 If this is not set, the property is not required if it has a default value.
 
 ```php
-#[Serialize()]
+#[Serialize]
 protected string $name;
 // ^ required
 
-#[Serialize()]
+#[Serialize]
 protected int $age = 1;
 // ^ not required
 // If not set in the serialized data, the default value (1) is used
@@ -126,7 +126,7 @@ If this is not set, and the property is annotated with a type the nullability of
 If no type is provided, the property is allowed to be `null`.
 
 ```php
-#[Serialize()]
+#[Serialize]
 protected string $a;
 // ^ does not allow null
 
@@ -134,7 +134,7 @@ protected string $a;
 protected ?string $c = null;
 // ^ does not allow null
 
-#[Serialize()]
+#[Serialize]
 protected ?string $b;
 // ^ allows null
 

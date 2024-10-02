@@ -103,6 +103,10 @@ class ArrayDeserializer
                 return;
             }
 
+            if (!$type || $type->allowsNull()) {
+                $property->setValue($result, null);
+            }
+
             // If there is no default value and the property is not required, we can skip it
             return;
         }

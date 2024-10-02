@@ -294,7 +294,7 @@ class DeserializerTest extends TestCase
             "stringWithoutDefault" => "test",
             "nullableStringWithoutDefault" => "test"
         ]);
-        $this->assertFalse(isset($testClass->nullableIntWithoutDefault));
+        $this->assertNull($testClass->nullableIntWithoutDefault);
     }
 
     public function testDeserializeStringWithDefault(): void
@@ -334,7 +334,7 @@ class DeserializerTest extends TestCase
             "stringWithDefault" => "test",
             "stringWithoutDefault" => "test"
         ]);
-        $this->assertFalse(isset($testClass->nullableStringWithoutDefault));
+        $this->assertNull($testClass->nullableStringWithoutDefault);
     }
 
     public function testDeserializeNullType(): void
