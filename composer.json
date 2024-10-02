@@ -28,6 +28,6 @@
         "phpunit/phpunit": "^11"
     },
     "scripts": {
-        "test": "phpunit tests"
+        "test": "phpunit --configuration phpunit.xml --testdox"
     }
 }
