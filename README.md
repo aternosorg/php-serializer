@@ -2,13 +2,27 @@
 
 A PHP library for (de-)serialization using attributes and reflection.
 
-## Installation
+- [Installation](#installation)
+- [Usage](#usage)
+- [The Serialize Attribute](#the-serialize-attribute)
+  - [Name](#name)
+  - [Required](#required)
+  - [Allow Null](#allow-null)
+- [Exceptions](#exceptions)
+  - [SerializationException](#serializationexception)
+  - [InvalidInputException](#invalidinputexception)
+  - [MissingPropertyException](#missingpropertyexception)
+  - [IncorrectTypeException](#incorrecttypeexception)
+  - [UnsupportedTypeException](#unsupportedtypeexception)
+- [Custom Serializers](#custom-serializers)
+
+### Installation
 
 ```bash
 composer require aternos/serializer
 ```
 
-## Usage
+### Usage
 
 This library adds a simple trait which implements `\JsonSerializable` by serializing all properties
 with the `#[Serialize]` attribute. This attribute can be used to configure the serialization of the property.
