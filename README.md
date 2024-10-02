@@ -52,6 +52,9 @@ $example = ExampleClass::tryFromJson('{ "name": "John", "age": 25, "last_name": 
 // ^ returns null if the input is invalid
 ```
 
+> [!NOTE]
+> Deserialization is not supported for intersection types as there is no way to determine the correct type.
+
 If you prefer you can also serialize and deserialize manually.
 
 ```php
@@ -143,7 +146,56 @@ protected string $c;
 ```
 
 ### Exceptions
-TODO
+The following exceptions may be thrown during serialization or deserialization:
+- [MissingPropertyException](#missingpropertyexception)
+- [IncorrectTypeException](#incorrecttypeexception)
+
+Both of these exceptions extend [InvalidInputException](#invalidinputexception).
+
+During deserialization, the following additional exceptions may be thrown:
+- [UnsupportedTypeException](#unsupportedtypeexception)
+- [JsonException](https://www.php.net/manual/en/class.jsonexception.php)
+
+JsonException is a built-in PHP exception that is thrown when an error occurs during JSON encoding or decoding.
+All other exceptions extend [SerializationException](#serializationexception) and are described below.
+
+#### SerializationException
+This is a common parent class for all exceptions thrown during serialization or deserialization (except the PHP-built-in JsonException).
+It is useful for catching, but never instantiated directly.
+
+#### InvalidInputException
+This is a parent class for all exceptions caused by an invalid input.
+During serialization, the input in question is the PHP object you want to serialize.
+For deserialization, the input refers to the JSON data.
+
+#### MissingPropertyException
+During serialization this is thrown if a required property is not initialized.
+During deserialization this is thrown if a required property is missing in the input data.
+
+#### IncorrectTypeException
+During serialization this is thrown if a property has a null value, but does not [allow null](#allow-null).
+During deserialization this is thrown if a property has a value of an incorrect type
+(e.g. an int is passed for a string property).
+
+#### UnsupportedTypeException
+As noted above, deserializing intersection types is not supported.
+If an intersection type is encountered during deserialization, this exception is thrown.
+It's also thrown if a php built-in type is encountered that is not yet supported by the library.
 
 ### Custom Serializers
-TODO
+If you want to write a serializer for a different format, you can use the ArraySerializer and ArrayDeserializer class.
+These convert the object to an associative array and vice versa.
+
+```php
+$example = new ExampleClass("John", 25, "Doe");
+$serializer = new \Aternos\Serializer\Array\ArraySerializer();
+$deserializer = new \Aternos\Serializer\Array\ArrayDeserializer(ExampleClass::class);
+try {
+    $array = $serializer->serialize($example);
+    // ^ ['name' => 'John', 'age' => 25, 'last_name' => 'Doe']
+    $example = $deserializer->deserialize($array);
+} catch (SerializationException $e) {
+    // handle exception
+}
+```
+See the JsonSerializer and JsonDeserializer classes for an example implementation.
