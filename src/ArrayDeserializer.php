@@ -19,7 +19,7 @@ use ReflectionUnionType;
  *
  * Usage:
  * ```php
- * $deserializer = new Deserializer(TestClass::class);
+ * $deserializer = new ArrayDeserializer(TestClass::class);
  * $object = $deserializer->deserialize(["name" => "test", "age" => 18]);
  * ```
  *

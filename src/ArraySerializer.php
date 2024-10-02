@@ -13,7 +13,7 @@ use ReflectionClass;
  *
  * Usage:
  * <code>
- * $serializer = new Serializer();
+ * $serializer = new ArraySerializer();
  * $data = $serializer->serialize(new TestClass());
  * $json = json_encode($data);
  * </code>
