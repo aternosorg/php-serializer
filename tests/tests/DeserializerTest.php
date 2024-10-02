@@ -7,6 +7,7 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\ArrayDeserializerAccessor;
 use Aternos\Serializer\Test\Src\ArrayTests;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
@@ -470,5 +471,13 @@ class DeserializerTest extends TestCase
         $expected = new BuiltInTypeTestClass();
         $expected->int = 1;
         $this->assertEquals(["test" => $expected], $testClass->typedArray);
+    }
+
+    public function testUnknownBuiltInType(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(TestClass::class);
+        $this->expectException(UnsupportedTypeException::class);
+        $this->expectExceptionMessage("Unsupported type 'not-a-real-type' for property '.name'");
+        $deserializer->isBuiltInTypeValid("not-a-real-type", "test", ".name");
     }
 }

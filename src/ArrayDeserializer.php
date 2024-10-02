@@ -203,29 +203,18 @@ class ArrayDeserializer
         string              $name
     ): mixed
     {
-        if ($type->isBuiltin()) {
-            $valid = match ($type->getName()) {
-                "bool" => is_bool($value),
-                "int" => is_int($value),
-                "float" => is_float($value) || is_int($value),
-                "string" => is_string($value),
-                "mixed" => true,
-                "array" => is_array($value),
-                "object" => is_object($value),
-                "false" => $value === false,
-                "true" => $value === true,
-                default => throw new UnsupportedTypeException($path . "." . $name, $type->getName()),
-            };
+        $propertyPath = $path . "." . $name;
 
-            if (!$valid) {
-                throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
+        if ($type->isBuiltin()) {
+            if (!$this->isBuiltInTypeValid($type->getName(), $value, $propertyPath)) {
+                throw new IncorrectTypeException($propertyPath, $type->getName(), $value);
             }
 
             return $value;
         }
 
         if (!is_array($value)) {
-            throw new IncorrectTypeException($path . "." . $name, $type->getName(), $value);
+            throw new IncorrectTypeException($propertyPath, $type->getName(), $value);
         }
 
         if ($type->getName() === "self") {
@@ -233,6 +222,30 @@ class ArrayDeserializer
         } else {
             $deserializer = new static($type->getName());
         }
-        return $deserializer->deserialize($value, $path . "." . $name);
+        return $deserializer->deserialize($value, $propertyPath);
+    }
+
+    /**
+     * Check if a built-in type is valid
+     * @param string $type the type to check
+     * @param mixed $value the value to check
+     * @param string $path the path to the data in the base data (used for error messages)
+     * @return bool if the type is valid
+     * @throws UnsupportedTypeException if the type of the property is unsupported
+     */
+    protected function isBuiltInTypeValid(string $type, mixed $value, string $path): bool
+    {
+        return match ($type) {
+            "bool" => is_bool($value),
+            "int" => is_int($value),
+            "float" => is_float($value) || is_int($value),
+            "string" => is_string($value),
+            "mixed" => true,
+            "array" => is_array($value),
+            "object" => is_object($value),
+            "false" => $value === false,
+            "true" => $value === true,
+            default => throw new UnsupportedTypeException($path, $type),
+        };
     }
 }
