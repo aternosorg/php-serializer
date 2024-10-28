@@ -9,12 +9,15 @@ A PHP library for (de-)serialization using attributes and reflection.
   - [Required](#required)
   - [Allow Null](#allow-null)
   - [Item Type](#item-type)
+  - [Serializer and Deserializer](#serializer-and-deserializer)
+  - [Item Serializer and Item Deserializer](#item-serializer-and-item-deserializer)
 - [Exceptions](#exceptions)
   - [SerializationException](#serializationexception)
   - [InvalidInputException](#invalidinputexception)
   - [MissingPropertyException](#missingpropertyexception)
   - [IncorrectTypeException](#incorrecttypeexception)
   - [UnsupportedTypeException](#unsupportedtypeexception)
+  - [InvalidEnumBackingException](#invalidenumbackingexception)
 - [Custom Serializers](#custom-serializers)
 
 ### Installation
@@ -69,6 +72,9 @@ $example = ExampleClass::tryFromJson('{ "name": "John", "age": 25, "last_name": 
 
 > [!NOTE]
 > Deserialization is not supported for intersection types as there is no way to determine the correct type.
+
+> [!NOTE]
+> Serialization and deserialization of enums is only supported for backed enums.
 
 If you prefer you can also serialize and deserialize manually.
 
@@ -206,6 +212,7 @@ Both of these exceptions extend [InvalidInputException](#invalidinputexception).
 
 During deserialization, the following additional exceptions may be thrown:
 - [UnsupportedTypeException](#unsupportedtypeexception)
+- [InvalidEnumBackingException](#invalidenumbackingexception)
 - [JsonException](https://www.php.net/manual/en/class.jsonexception.php)
 
 JsonException is a built-in PHP exception that is thrown when an error occurs during JSON encoding or decoding.
@@ -233,6 +240,11 @@ During deserialization this is thrown if a property has a value of an incorrect 
 As noted above, deserializing intersection types is not supported.
 If an intersection type is encountered during deserialization, this exception is thrown.
 It's also thrown if a php built-in type is encountered that is not yet supported by the library.
+
+#### InvalidEnumBackingException
+This exception is thrown if an enum is deserialized with an invalid backing value.
+This can happen if the value that is deserialized is not scalar,
+or if the target enum does not have a matching case.
 
 ### Custom Serializers
 If you want to write a serializer for a different format, you can use the ArraySerializer and ArrayDeserializer class.
