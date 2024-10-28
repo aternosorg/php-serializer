@@ -7,11 +7,14 @@ use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\BackedEnumTestClass;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
+use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
+use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -138,5 +141,19 @@ class SerializerTest extends TestCase
         $testClass->setTestArray([1]);
         $this->expectException(IncorrectTypeException::class);
         json_encode($testClass);
+    }
+
+    public function testSerializeBackedEnum(): void
+    {
+        $serializer = new ArraySerializer();
+        $this->assertEquals(["enum" => "a"], $serializer->serialize(new BackedEnumTestClass()));
+    }
+
+    public function testSerializeUnbackedEnum(): void
+    {
+        $serializer = new ArraySerializer();
+        $this->expectException(IncorrectTypeException::class);
+        $this->expectExceptionMessage("Expected 'enum' to be 'BackedEnum' found: \Aternos\Serializer\Test\Src\TestEnum::A");
+        $serializer->serialize(new EnumTestClass());
     }
 }
