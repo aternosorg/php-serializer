@@ -154,8 +154,8 @@ class ArrayDeserializer implements DeserializerInterface
             );
         }
 
-        if (is_array($value) && $attribute->getItemType() !== null) {
-            $deserializer = new static($attribute->getItemType());
+        if (is_array($value) && ($attribute->getItemType() !== null || $attribute->getItemDeserializer() !== null)) {
+            $deserializer = $attribute->getItemDeserializer() ?? new static($attribute->getItemType());
             $value = array_map(fn($item) => $deserializer->deserialize($item, $path . "." . $name), $value);
         }
 

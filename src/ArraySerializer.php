@@ -71,8 +71,15 @@ class ArraySerializer implements SerializerInterface
                 $value = $customSerializer->serialize($value);
             } else if ($value instanceof JsonSerializable) {
                 $value = $value->jsonSerialize();
-            } elseif (is_object($value)) {
+            } else if (is_object($value)) {
                 $value = $this->serialize($value);
+            } else if (is_array($value) && $customSerializer = $attribute->getItemSerializer()) {
+                foreach ($value as $key => $item) {
+                    if (!is_object($item)) {
+                        throw new IncorrectTypeException($property->getName(), "object", $item);
+                    }
+                    $value[$key] = $customSerializer->serialize($item);
+                }
             }
 
             $serializedProperties[$name] = $value;

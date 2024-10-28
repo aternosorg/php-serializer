@@ -21,9 +21,6 @@ class SerializeTest extends TestCase
 
     protected string $nonSerializedName = "this isn't serialized";
 
-    #[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class))]
-    protected TestClass $testClass;
-
     public function testConstruct(): void
     {
         $property = new Serialize(
@@ -81,10 +78,16 @@ class SerializeTest extends TestCase
 
     public function testGetCustomSerializerAndDeserializer(): void
     {
-        $property = new ReflectionProperty($this, "testClass");
-        $attribute = Serialize::getAttribute($property);
+        $attribute = new Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class));
         $this->assertNotNull($attribute);
         $this->assertInstanceOf(Base64Serializer::class, $attribute->getSerializer());
         $this->assertInstanceOf(Base64Deserializer::class, $attribute->getDeserializer());
+    }
+
+    public function testGetCustomItemSerializerAndDeserializer(): void
+    {
+        $attribute = new Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(TestClass::class));
+        $this->assertInstanceOf(Base64Serializer::class, $attribute->getItemSerializer());
+        $this->assertInstanceOf(Base64Deserializer::class, $attribute->getItemDeserializer());
     }
 }

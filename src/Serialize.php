@@ -36,6 +36,8 @@ class Serialize
         protected ?string $itemType = null,
         protected ?SerializerInterface $serializer = null,
         protected ?DeserializerInterface $deserializer = null,
+        protected ?SerializerInterface $itemSerializer = null,
+        protected ?DeserializerInterface $itemDeserializer = null,
     )
     {
     }
@@ -77,5 +79,21 @@ class Serialize
     public function getDeserializer(): ?DeserializerInterface
     {
         return $this->deserializer;
+    }
+
+    /**
+     * @return SerializerInterface|null
+     */
+    public function getItemSerializer(): ?SerializerInterface
+    {
+        return $this->itemSerializer;
+    }
+
+    /**
+     * @return DeserializerInterface|null
+     */
+    public function getItemDeserializer(): ?DeserializerInterface
+    {
+        return $this->itemDeserializer;
     }
 }

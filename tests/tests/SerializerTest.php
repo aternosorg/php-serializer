@@ -128,7 +128,15 @@ class SerializerTest extends TestCase
     public function testCustomSerializer(): void
     {
         $testClass = new CustomSerializerTestClass();
-        $expected = '{"testClass":"TzozNzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFRlc3RDbGFzcyI6OTp7czo2OiIAKgBhZ2UiO2k6MDtzOjE1OiIAKgBvcmlnaW5hbE5hbWUiO047czoxMToiACoAbnVsbGFibGUiO047czoxMjoiACoAYm9vbE9ySW50IjtiOjA7czoxNjoiACoAbm90QUpzb25GaWVsZCI7czo0OiJ0ZXN0IjtzOjE4OiIAKgBzZWNvbmRUZXN0Q2xhc3MiO047czo4OiIAKgBtaXhlZCI7TjtzOjg6IgAqAGZsb2F0IjtOO3M6ODoiACoAYXJyYXkiO047fQ=="}';
+        $expected = '{"testClass":"Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","testArray":["Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ=="]}';
         $this->assertEquals($expected, json_encode($testClass));
+    }
+
+    public function testCustomItemSerializerThrowsIfItemIsNotAnObject(): void
+    {
+        $testClass = new CustomSerializerTestClass();
+        $testClass->setTestArray([1]);
+        $this->expectException(IncorrectTypeException::class);
+        json_encode($testClass);
     }
 }

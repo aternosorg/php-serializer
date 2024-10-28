@@ -15,6 +15,7 @@ use Aternos\Serializer\Test\Src\CustomSerializerInvalidTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
+use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestClass;
 use Aternos\Serializer\Test\Src\UnionIntersectionTestClass;
@@ -496,16 +497,19 @@ class DeserializerTest extends TestCase
     public function testCustomDeserializer(): void
     {
         $deserializer = new JsonDeserializer(CustomSerializerTestClass::class);
-        $testClass = $deserializer->deserialize('{"testClass":"TzozNzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFRlc3RDbGFzcyI6OTp7czo2OiIAKgBhZ2UiO2k6MDtzOjE1OiIAKgBvcmlnaW5hbE5hbWUiO047czoxMToiACoAbnVsbGFibGUiO047czoxMjoiACoAYm9vbE9ySW50IjtiOjA7czoxNjoiACoAbm90QUpzb25GaWVsZCI7czo0OiJ0ZXN0IjtzOjE4OiIAKgBzZWNvbmRUZXN0Q2xhc3MiO047czo4OiIAKgBtaXhlZCI7TjtzOjg6IgAqAGZsb2F0IjtOO3M6ODoiACoAYXJyYXkiO047fQ=="}');
+        $testClass = $deserializer->deserialize('{"testClass":"Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","testArray":["Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ=="]}');
         $this->assertInstanceOf(CustomSerializerTestClass::class, $testClass);
-        $this->assertInstanceOf(TestClass::class, $testClass->getTestClass());
+        $this->assertInstanceOf(SecondTestClass::class, $testClass->getTestClass());
+        $this->assertIsArray($testClass->getTestArray());
+        $this->assertInstanceOf(SecondTestClass::class, $testClass->getTestArray()[0]);
+        $this->assertInstanceOf(SecondTestClass::class, $testClass->getTestArray()[1]);
     }
 
     public function testCustomDeserializerReturnsInvalidType(): void
     {
         $deserializer = new JsonDeserializer(CustomSerializerInvalidTypeTestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\SecondTestClass::__set_state(array(\n))");
-        $deserializer->deserialize('{"testClass":"Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ=="}');
+        $this->expectExceptionMessage("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\BuiltInTypeTestClass::");
+        $deserializer->deserialize('{"testClass":"Tzo0ODoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXEJ1aWx0SW5UeXBlVGVzdENsYXNzIjo4OntzOjM6ImludCI7TjtzOjU6ImZsb2F0IjtOO3M6Njoic3RyaW5nIjtOO3M6NToiYXJyYXkiO047czo2OiJvYmplY3QiO047czo0OiJzZWxmIjtOO3M6NToiZmFsc2UiO047czo0OiJ0cnVlIjtOO30="}');
     }
 }

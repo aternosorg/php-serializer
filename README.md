@@ -188,6 +188,15 @@ protected TestClass $example;
 Note that the custom Deserializer is responsible for returning the correct type.
 If an incompatible type is returned, an IncorrectTypeException is thrown.
 
+#### Item Serializer and Item Deserializer
+
+Custom Serializers and Deserializers can also be specified for array items.
+
+```php
+#[Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(TestClass::class))]
+protected array $example = [];
+```
+
 ### Exceptions
 The following exceptions may be thrown during serialization or deserialization:
 - [MissingPropertyException](#missingpropertyexception)
