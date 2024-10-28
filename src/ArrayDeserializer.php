@@ -2,18 +2,21 @@
 
 namespace Aternos\Serializer;
 
+use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Exceptions\SerializationException;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use InvalidArgumentException;
 use ReflectionClass;
+use ReflectionEnum;
 use ReflectionException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionUnionType;
 use TypeError;
+use ValueError;
 
 /**
  * Deserializes arrays into objects using the Serialize attribute.
@@ -48,21 +51,28 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws MissingPropertyException if a required property is missing
      * @throws UnsupportedTypeException if the type of the property is unsupported
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     public function deserialize(
         mixed $data,
         string $path = "",
     ): object
     {
-        if (!is_array($data)) {
-            throw new InvalidArgumentException("Data must be an array.");
-        }
         try {
             $reflectionClass = new ReflectionClass($this->class);
-            $result = new $this->class;
         } catch (ReflectionException) {
             throw new InvalidArgumentException("Class '" . $this->class . "' does not exist.");
         }
+
+        if ($reflectionClass->isEnum()) {
+            return $this->parseEnum($data, $path);
+        }
+
+        if (!is_array($data)) {
+            throw new IncorrectTypeException($path, $this->class, $data);
+        }
+
+        $result = new $this->class;
 
         foreach ($reflectionClass->getProperties() as $property) {
             $this->deserializeProperty($data, $path, $property, $result);
@@ -81,6 +91,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws MissingPropertyException if the property is required but missing
      * @throws UnsupportedTypeException if the type of the property is unsupported
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     protected function deserializeProperty(
         array $data,
@@ -208,6 +219,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws UnsupportedTypeException if the type of the property is unsupported
      * @throws MissingPropertyException if a required property is missing
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     protected function  parseNamedType(
         ReflectionNamedType $type,
@@ -224,10 +236,6 @@ class ArrayDeserializer implements DeserializerInterface
             }
 
             return $value;
-        }
-
-        if (!is_array($value)) {
-            throw new IncorrectTypeException($propertyPath, $type->getName(), $value);
         }
 
         if ($type->getName() === "self") {
@@ -260,5 +268,34 @@ class ArrayDeserializer implements DeserializerInterface
             "true" => $value === true,
             default => throw new UnsupportedTypeException($path, $type),
         };
+    }
+
+    /**
+     * @param mixed $value
+     * @param string $path
+     * @return mixed
+     * @throws InvalidEnumBackingException
+     * @throws UnsupportedTypeException
+     * @noinspection PhpDocMissingThrowsInspection
+     */
+    protected function parseEnum(mixed $value, string $path): mixed
+    {
+        /** @noinspection PhpUnhandledExceptionInspection - It has already been verified that the enum exists */
+        $reflectionEnum = new ReflectionEnum($this->class);
+
+        if (!$reflectionEnum->isBacked()) {
+            throw new UnsupportedTypeException($path, $this->class, "Enums must be backed by a scalar type.");
+        }
+
+        $backingType = $reflectionEnum->getBackingType();
+        if (!$backingType->isBuiltin() || !$this->isBuiltInTypeValid($backingType->getName(), $value, $path)) {
+            throw new InvalidEnumBackingException($this->class, $backingType->getName(), $value);
+        }
+
+        try {
+            return $this->class::from($value);
+        } catch (ValueError) {
+            throw new InvalidEnumBackingException($this->class, $backingType->getName(), $value);
+        }
     }
 }

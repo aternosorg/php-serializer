@@ -4,19 +4,23 @@ namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\ArrayDeserializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Json\JsonDeserializer;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\ArrayDeserializerAccessor;
 use Aternos\Serializer\Test\Src\ArrayTests;
+use Aternos\Serializer\Test\Src\BackedEnumTestClass;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerInvalidTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
+use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
+use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
 use Aternos\Serializer\Test\Src\UnionIntersectionTestClass;
 use InvalidArgumentException;
@@ -30,6 +34,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(MissingPropertyException::class)]
 #[UsesClass(UnsupportedTypeException::class)]
 #[UsesClass(JsonDeserializer::class)]
+#[UsesClass(InvalidEnumBackingException::class)]
 class DeserializerTest extends TestCase
 {
     public function testDeserialize(): void
@@ -489,8 +494,7 @@ class DeserializerTest extends TestCase
     public function testArrayDeserializerArgumentIsNotAnArray(): void
     {
         $deserializer = new ArrayDeserializerAccessor(TestClass::class);
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Data must be an array.");
+        $this->expectException(IncorrectTypeException::class);
         $deserializer->deserialize("not-an-array");
     }
 
@@ -511,5 +515,35 @@ class DeserializerTest extends TestCase
         $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\BuiltInTypeTestClass::");
         $deserializer->deserialize('{"testClass":"Tzo0ODoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXEJ1aWx0SW5UeXBlVGVzdENsYXNzIjo4OntzOjM6ImludCI7TjtzOjU6ImZsb2F0IjtOO3M6Njoic3RyaW5nIjtOO3M6NToiYXJyYXkiO047czo2OiJvYmplY3QiO047czo0OiJzZWxmIjtOO3M6NToiZmFsc2UiO047czo0OiJ0cnVlIjtOO30="}');
+    }
+
+    public function testDeserializeBackedEnum(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(BackedEnumTestClass::class);
+        $this->assertEquals(TestBackedEnum::A, $deserializer->deserialize(["enum" => "a"])->getEnum());
+    }
+
+    public function testDeserializeUnbackedEnum(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(EnumTestClass::class);
+        $this->expectException(UnsupportedTypeException::class);
+        $this->expectExceptionMessage("Unsupported type 'Aternos\Serializer\Test\Src\TestEnum' for property '.enum': Enums must be backed by a scalar type.");
+        $deserializer->deserialize(["enum" => "a"]);
+    }
+
+    public function testDeserializeEnumWithInvalidBackingValue(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(BackedEnumTestClass::class);
+        $this->expectException(InvalidEnumBackingException::class);
+        $this->expectExceptionMessage("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 'd'");
+        $deserializer->deserialize(["enum" => "d"]);
+    }
+
+    public function testDeserializeEnumWithInvalidBackingType(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(TestBackedEnum::class);
+        $this->expectException(InvalidEnumBackingException::class);
+        $this->expectExceptionMessage("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 0");
+        $this->assertEquals(TestBackedEnum::A, $deserializer->deserialize(0));
     }
 }

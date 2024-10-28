@@ -71,6 +71,11 @@ class ArraySerializer implements SerializerInterface
                 $value = $customSerializer->serialize($value);
             } else if ($value instanceof JsonSerializable) {
                 $value = $value->jsonSerialize();
+            } else if ($value instanceof \UnitEnum) {
+                if (!$value instanceof \BackedEnum) {
+                    throw new IncorrectTypeException($property->getName(), "BackedEnum", $value);
+                }
+                $value = $value->value;
             } else if (is_object($value)) {
                 $value = $this->serialize($value);
             } else if (is_array($value) && $customSerializer = $attribute->getItemSerializer()) {
