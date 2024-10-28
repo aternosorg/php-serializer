@@ -6,10 +6,13 @@ use Aternos\Serializer\ArrayDeserializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
+use Aternos\Serializer\Json\JsonDeserializer;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\ArrayDeserializerAccessor;
 use Aternos\Serializer\Test\Src\ArrayTests;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
+use Aternos\Serializer\Test\Src\CustomSerializerInvalidTypeTestClass;
+use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
@@ -25,6 +28,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(IncorrectTypeException::class)]
 #[UsesClass(MissingPropertyException::class)]
 #[UsesClass(UnsupportedTypeException::class)]
+#[UsesClass(JsonDeserializer::class)]
 class DeserializerTest extends TestCase
 {
     public function testDeserialize(): void
@@ -479,5 +483,29 @@ class DeserializerTest extends TestCase
         $this->expectException(UnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'not-a-real-type' for property '.name'");
         $deserializer->isBuiltInTypeValid("not-a-real-type", "test", ".name");
+    }
+
+    public function testArrayDeserializerArgumentIsNotAnArray(): void
+    {
+        $deserializer = new ArrayDeserializerAccessor(TestClass::class);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Data must be an array.");
+        $deserializer->deserialize("not-an-array");
+    }
+
+    public function testCustomDeserializer(): void
+    {
+        $deserializer = new JsonDeserializer(CustomSerializerTestClass::class);
+        $testClass = $deserializer->deserialize('{"testClass":"TzozNzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFRlc3RDbGFzcyI6OTp7czo2OiIAKgBhZ2UiO2k6MDtzOjE1OiIAKgBvcmlnaW5hbE5hbWUiO047czoxMToiACoAbnVsbGFibGUiO047czoxMjoiACoAYm9vbE9ySW50IjtiOjA7czoxNjoiACoAbm90QUpzb25GaWVsZCI7czo0OiJ0ZXN0IjtzOjE4OiIAKgBzZWNvbmRUZXN0Q2xhc3MiO047czo4OiIAKgBtaXhlZCI7TjtzOjg6IgAqAGZsb2F0IjtOO3M6ODoiACoAYXJyYXkiO047fQ=="}');
+        $this->assertInstanceOf(CustomSerializerTestClass::class, $testClass);
+        $this->assertInstanceOf(TestClass::class, $testClass->getTestClass());
+    }
+
+    public function testCustomDeserializerReturnsInvalidType(): void
+    {
+        $deserializer = new JsonDeserializer(CustomSerializerInvalidTypeTestClass::class);
+        $this->expectException(IncorrectTypeException::class);
+        $this->expectExceptionMessage("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\SecondTestClass::__set_state(array(\n))");
+        $deserializer->deserialize('{"testClass":"Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ=="}');
     }
 }

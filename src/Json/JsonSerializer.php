@@ -5,6 +5,7 @@ namespace Aternos\Serializer\Json;
 use Aternos\Serializer\ArraySerializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
+use Aternos\Serializer\SerializerInterface;
 
 /**
  * A class that serializes objects using the Serialize attribute.
@@ -18,7 +19,7 @@ use Aternos\Serializer\Exceptions\MissingPropertyException;
  * @see ArraySerializer
  * @see PropertyJsonSerializer
  */
-class JsonSerializer
+class JsonSerializer implements SerializerInterface
 {
     protected ArraySerializer $arraySerializer;
 

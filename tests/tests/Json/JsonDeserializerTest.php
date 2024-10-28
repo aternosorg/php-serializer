@@ -34,4 +34,12 @@ class JsonDeserializerTest extends TestCase
         $this->expectExceptionMessage("Expected '.' to be 'Aternos\Serializer\Test\Src\TestClass' found: 0");
         $deserializer->deserialize("0");
     }
+
+    public function testJsonDeserializerDataIsNotStringOrArray(): void
+    {
+        $deserializer = new JsonDeserializer(TestClass::class);
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage("Data must be a string or an array.");
+        $deserializer->deserialize(0);
+    }
 }

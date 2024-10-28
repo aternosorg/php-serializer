@@ -13,6 +13,7 @@ use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionProperty;
 use ReflectionUnionType;
+use TypeError;
 
 /**
  * Deserializes arrays into objects using the Serialize attribute.
@@ -26,7 +27,7 @@ use ReflectionUnionType;
  * @see Serialize
  * @template T
  */
-class ArrayDeserializer
+class ArrayDeserializer implements DeserializerInterface
 {
 
     /**
@@ -49,10 +50,13 @@ class ArrayDeserializer
      * @throws UnsupportedTypeException if the type of the property is unsupported
      */
     public function deserialize(
-        array $data,
+        mixed $data,
         string $path = "",
     ): object
     {
+        if (!is_array($data)) {
+            throw new InvalidArgumentException("Data must be an array.");
+        }
         try {
             $reflectionClass = new ReflectionClass($this->class);
             $result = new $this->class;
@@ -112,6 +116,15 @@ class ArrayDeserializer
         }
 
         $value = $data[$name];
+        if ($customDeserializer = $attribute->getDeserializer()) {
+            $value = $customDeserializer->deserialize($value, $path);
+            try {
+                $property->setValue($result, $value);
+            } catch (TypeError) {
+                throw new IncorrectTypeException($path . "." . $name, $type, $value);
+            }
+            return;
+        }
 
         $nullable = $attribute->allowsNull() ?? $type?->allowsNull() ?? true;
         if ($value === null) {

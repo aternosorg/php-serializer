@@ -25,7 +25,7 @@ use ReflectionClass;
  * @see Serialize
  * @see JsonSerializer
  */
-class ArraySerializer
+class ArraySerializer implements SerializerInterface
 {
     /**
      * Create a serializer from an object
@@ -67,7 +67,9 @@ class ArraySerializer
             $name = $attribute->getName() ?? $property->getName();
             $value = $property->getValue($item);
 
-            if ($value instanceof JsonSerializable) {
+            if ($customSerializer = $attribute->getSerializer()) {
+                $value = $customSerializer->serialize($value);
+            } else if ($value instanceof JsonSerializable) {
                 $value = $value->jsonSerialize();
             } elseif (is_object($value)) {
                 $value = $this->serialize($value);

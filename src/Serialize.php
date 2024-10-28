@@ -26,12 +26,16 @@ class Serialize
      * @param bool|null $required Whether the field is required
      * @param bool|null $allowNull Whether the field can be null
      * @param class-string|null $itemType The type of the items in the array
+     * @param SerializerInterface|null $serializer A custom serializer for this field
+     * @param DeserializerInterface|null $deserializer A custom deserializer for this field
      */
     public function __construct(
         protected ?string $name = null,
         protected ?bool   $required = null,
         protected ?bool   $allowNull = null,
         protected ?string $itemType = null,
+        protected ?SerializerInterface $serializer = null,
+        protected ?DeserializerInterface $deserializer = null,
     )
     {
     }
@@ -57,5 +61,21 @@ class Serialize
     public function getItemType(): ?string
     {
         return $this->itemType;
+    }
+
+    /**
+     * @return SerializerInterface|null
+     */
+    public function getSerializer(): ?SerializerInterface
+    {
+        return $this->serializer;
+    }
+
+    /**
+     * @return DeserializerInterface|null
+     */
+    public function getDeserializer(): ?DeserializerInterface
+    {
+        return $this->deserializer;
     }
 }
