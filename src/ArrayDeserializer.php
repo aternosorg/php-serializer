@@ -91,7 +91,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws MissingPropertyException if the property is required but missing
      * @throws UnsupportedTypeException if the type of the property is unsupported
-     * @throws InvalidEnumBackingException
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     protected function deserializeProperty(
         array $data,
@@ -219,7 +219,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws UnsupportedTypeException if the type of the property is unsupported
      * @throws MissingPropertyException if a required property is missing
-     * @throws InvalidEnumBackingException
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     protected function  parseNamedType(
         ReflectionNamedType $type,
