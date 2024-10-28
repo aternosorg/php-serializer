@@ -10,19 +10,40 @@ class CustomSerializerTestClass implements JsonSerializable
 {
     use PropertyJsonSerializer;
 
-    #[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class))]
-    protected TestClass $testClass;
+    #[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(SecondTestClass::class))]
+    protected SecondTestClass $testClass;
+
+    #[Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(SecondTestClass::class))]
+    protected array $testArray = [];
 
     public function __construct()
     {
-        $this->testClass = new TestClass();
+        $this->testClass = new SecondTestClass();
+        $this->testArray = [new SecondTestClass(), new SecondTestClass()];
     }
 
     /**
-     * @return TestClass
+     * @return SecondTestClass
      */
-    public function getTestClass(): TestClass
+    public function getTestClass(): SecondTestClass
     {
         return $this->testClass;
+    }
+
+    /**
+     * @return SecondTestClass[]
+     */
+    public function getTestArray(): array
+    {
+        return $this->testArray;
+    }
+
+    /**
+     * @param array $testArray
+     * @return void
+     */
+    public function setTestArray(array $testArray): void
+    {
+        $this->testArray = $testArray;
     }
 }
