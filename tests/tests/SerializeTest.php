@@ -3,6 +3,8 @@
 namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\Base64Deserializer;
+use Aternos\Serializer\Test\Src\Base64Serializer;
 use Aternos\Serializer\Test\Src\TestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -18,6 +20,9 @@ class SerializeTest extends TestCase
     protected string $otherName = "other-name";
 
     protected string $nonSerializedName = "this isn't serialized";
+
+    #[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class))]
+    protected TestClass $testClass;
 
     public function testConstruct(): void
     {
@@ -72,5 +77,14 @@ class SerializeTest extends TestCase
     {
         $property = new Serialize(itemType: TestClass::class);
         $this->assertSame(TestClass::class, $property->getItemType());
+    }
+
+    public function testGetCustomSerializerAndDeserializer(): void
+    {
+        $property = new ReflectionProperty($this, "testClass");
+        $attribute = Serialize::getAttribute($property);
+        $this->assertNotNull($attribute);
+        $this->assertInstanceOf(Base64Serializer::class, $attribute->getSerializer());
+        $this->assertInstanceOf(Base64Deserializer::class, $attribute->getDeserializer());
     }
 }

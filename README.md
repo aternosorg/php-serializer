@@ -176,6 +176,18 @@ protected array $otherExamples;
 // ^ items in the array will not be converted
 ```
 
+#### Serializer and Deserializer
+A custom Serializer and Deserializer can be specified for a property.
+This can be useful if you want to serialize a specific property in a different way.
+
+```php
+#[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class))]
+protected TestClass $example;
+```
+
+Note that the custom Deserializer is responsible for returning the correct type.
+If an incompatible type is returned, an IncorrectTypeException is thrown.
+
 ### Exceptions
 The following exceptions may be thrown during serialization or deserialization:
 - [MissingPropertyException](#missingpropertyexception)
