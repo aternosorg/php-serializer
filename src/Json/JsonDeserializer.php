@@ -5,6 +5,7 @@ namespace Aternos\Serializer\Json;
 use Aternos\Serializer\ArrayDeserializer;
 use Aternos\Serializer\DeserializerInterface;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use InvalidArgumentException;
@@ -45,6 +46,7 @@ class JsonDeserializer implements DeserializerInterface
      * @throws IncorrectTypeException if the type of the property is incorrect
      * @throws MissingPropertyException if a required property is missing
      * @throws UnsupportedTypeException if the type of the property is unsupported
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      * @throws JsonException if the data is invalid json
      */
     public function deserialize(mixed $data, string $path = ""): object
