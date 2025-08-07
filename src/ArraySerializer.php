@@ -79,11 +79,11 @@ class ArraySerializer implements SerializerInterface
             } else if (is_object($value)) {
                 $value = $this->serialize($value);
             } else if (is_array($value) && $customSerializer = $attribute->getItemSerializer()) {
-                foreach ($value as $key => $item) {
-                    if (!is_object($item)) {
-                        throw new IncorrectTypeException($property->getName(), "object", $item);
+                foreach ($value as $key => $arrayItem) {
+                    if (!is_object($arrayItem)) {
+                        throw new IncorrectTypeException($property->getName(), "object", $arrayItem);
                     }
-                    $value[$key] = $customSerializer->serialize($item);
+                    $value[$key] = $customSerializer->serialize($arrayItem);
                 }
             }
 

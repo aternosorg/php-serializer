@@ -16,6 +16,8 @@ class CustomSerializerTestClass implements JsonSerializable
     #[Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(SecondTestClass::class))]
     protected array $testArray = [];
 
+    protected int $propertyAfterTestArray = 0;
+
     public function __construct()
     {
         $this->testClass = new SecondTestClass();
