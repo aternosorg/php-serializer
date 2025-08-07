@@ -3,10 +3,12 @@
 namespace Aternos\Serializer\Test\Tests;
 
 use Aternos\Serializer\ArraySerializer;
+use Aternos\Serializer\BackedEnumSerializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\ArraySerializeTests;
 use Aternos\Serializer\Test\Src\BackedEnumTestClass;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
@@ -14,7 +16,6 @@ use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
-use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
@@ -25,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(Serialize::class)]
 #[UsesClass(IncorrectTypeException::class)]
 #[UsesClass(MissingPropertyException::class)]
+#[UsesClass(BackedEnumSerializer::class)]
 class SerializerTest extends TestCase
 {
     public function testSerialize(): void
@@ -155,5 +157,51 @@ class SerializerTest extends TestCase
         $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessage("Expected 'enum' to be 'BackedEnum' found: \Aternos\Serializer\Test\Src\TestEnum::A");
         $serializer->serialize(new EnumTestClass());
+    }
+
+    public function testSerializeArrayItems(): void
+    {
+        $serializer = new ArraySerializer();
+        $testClass = new ArraySerializeTests();
+
+        $testClass->untypedArray = [new BuiltInTypeTestClass()];
+        $testClass->typedArray = [new BuiltInTypeTestClass()];
+        $testClass->array = [new BuiltInTypeTestClass()];
+
+        $this->assertEquals([
+            "untypedArray" => [[
+                "int" => null,
+                "float" => null,
+                "string" => null,
+                "array" => null,
+                "object" => null,
+                "self" => null,
+                "false" => null,
+                "true" => null,
+            ]],
+            "array" => [[
+                "int" => null,
+                "float" => null,
+                "string" => null,
+                "array" => null,
+                "object" => null,
+                "self" => null,
+                "false" => null,
+                "true" => null,
+            ]],
+            "typedArray" => [[
+                "int" => null,
+                "float" => null,
+                "string" => null,
+                "array" => null,
+                "object" => null,
+                "self" => null,
+                "false" => null,
+                "true" => null,
+            ]],
+            "backedEnumArray" => ["a"],
+            "stringArray" => [""],
+            "intArray" => [0],
+        ], $serializer->serialize($testClass));
     }
 }
