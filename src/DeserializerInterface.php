@@ -7,7 +7,7 @@ use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 
 /**
- * @template T
+ * @template T of object
  */
 interface DeserializerInterface
 {

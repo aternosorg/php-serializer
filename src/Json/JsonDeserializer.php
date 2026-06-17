@@ -21,7 +21,7 @@ use JsonException;
  * ```
  *
  * @see Serialize
- * @template T
+ * @template T of object
  */
 class JsonDeserializer implements DeserializerInterface
 {

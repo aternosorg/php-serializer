@@ -28,7 +28,7 @@ use ValueError;
  * ```
  *
  * @see Serialize
- * @template T
+ * @template T of object
  */
 class ArrayDeserializer implements DeserializerInterface
 {
