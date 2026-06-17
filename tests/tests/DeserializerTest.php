@@ -18,6 +18,7 @@ use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
+use Aternos\Serializer\Test\Src\PrivateTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestBackedEnum;
@@ -545,5 +546,11 @@ class DeserializerTest extends TestCase
         $this->expectException(InvalidEnumBackingException::class);
         $this->expectExceptionMessage("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 0");
         $this->assertEquals(TestBackedEnum::A, $deserializer->deserialize(0));
+    }
+
+    public function testCreatePrivateConstructor(): void
+    {
+        $deserializer = new ArrayDeserializer(PrivateTestClass::class);
+        $this->assertEquals("test", $deserializer->deserialize(["name" => "test"])->getName());
     }
 }

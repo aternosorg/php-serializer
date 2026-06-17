@@ -2,6 +2,8 @@
 
 namespace Aternos\Serializer\Exceptions;
 
+use Throwable;
+
 /**
  * An exception that is thrown when an unsupported type is encountered during (de)-serialization.
  */
@@ -14,13 +16,15 @@ class UnsupportedTypeException extends SerializationException
         protected string  $propertyPath,
         protected string  $type,
         protected ?string $reason = null,
+        int $code = 0,
+        ?Throwable $previous = null,
     )
     {
         $message = "Unsupported type '" . $type . "' for property '" . $propertyPath . "'";
         if ($reason !== null) {
             $message .= ": " . $reason;
         }
-        parent::__construct($message);
+        parent::__construct($message, $code, $previous);
     }
 
     /**

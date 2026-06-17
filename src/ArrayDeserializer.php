@@ -54,7 +54,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     public function deserialize(
-        mixed $data,
+        mixed  $data,
         string $path = "",
     ): object
     {
@@ -72,7 +72,17 @@ class ArrayDeserializer implements DeserializerInterface
             throw new IncorrectTypeException($path, $this->class, $data);
         }
 
-        $result = new $this->class;
+        $constructor = $reflectionClass->getConstructor();
+        if ($constructor && !$constructor->isPublic()) {
+            try {
+                $result = $reflectionClass->newInstanceWithoutConstructor();
+                $constructor->invoke($result);
+            } catch (ReflectionException $e) {
+                throw new UnsupportedTypeException($path, $this->class, $e->getMessage(), previous: $e);
+            }
+        } else {
+            $result = new $this->class;
+        }
 
         foreach ($reflectionClass->getProperties() as $property) {
             $this->deserializeProperty($data, $path, $property, $result);
@@ -94,10 +104,10 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
     protected function deserializeProperty(
-        array $data,
-        string $path,
+        array              $data,
+        string             $path,
         ReflectionProperty $property,
-        object $result
+        object             $result
     ): void
     {
         $attribute = Serialize::getAttribute($property);
@@ -221,7 +231,7 @@ class ArrayDeserializer implements DeserializerInterface
      * @throws MissingPropertyException if a required property is missing
      * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
      */
-    protected function  parseNamedType(
+    protected function parseNamedType(
         ReflectionNamedType $type,
         mixed               $value,
         string              $path,
