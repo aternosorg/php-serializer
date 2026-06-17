@@ -95,6 +95,16 @@ try {
 }
 ```
 
+### Constructors
+If you want to use a constructor for your class, all required parameters have to be annotated with the Serialize
+attribute to be deserializable. Optional parameters without the Serialize attribute will not be deserialized, their
+default value will be used instead.
+
+If you're using serializable parameters that are stored as properties, you should ideally use [promoted parameters](https://www.php.net/manual/en/language.oop5.decon.php#language.oop5.decon.constructor.promotion)
+for these since this prevents the library from having to deserialize these properties twice.
+
+The visibility of the constructor does not matter. The deserializer can call protected and private constructors.
+
 ### The Serialize Attribute
 The `Serialize` attribute can be used to configure the serialization of a property.
 It has the following options:
