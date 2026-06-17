@@ -94,7 +94,7 @@ class ArrayDeserializer implements DeserializerInterface
             } else {
                 try {
                     $result = $reflectionClass->newInstanceWithoutConstructor();
-                    $constructor->invoke($result, $args);
+                    $constructor->invoke($result, ...$args);
                 } catch (ReflectionException $e) {
                     throw new UnsupportedTypeException($path, $this->class, $e->getMessage(), previous: $e);
                 }
@@ -333,14 +333,22 @@ class ArrayDeserializer implements DeserializerInterface
 
     /**
      * Check if a type is valid
-     * @param ReflectionType $type
+     * @param ReflectionType|null $type
      * @param mixed $value
      * @param string $path
      * @return bool true if the type is valid, false otherwise
      * @throws UnsupportedTypeException if the type of the property is unsupported
      */
-    protected function isTypeValid(ReflectionType $type, mixed $value, string $path): bool
+    protected function isTypeValid(?ReflectionType $type, mixed $value, string $path): bool
     {
+        if (!$type) {
+            return true;
+        }
+
+        if ($type->allowsNull() && $value === null) {
+            return true;
+        }
+
         if ($type instanceof ReflectionNamedType) {
             if ($type->isBuiltin()) {
                 return $this->isBuiltInTypeValid($type->getName(), $value, $path);

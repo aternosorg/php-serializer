@@ -21,8 +21,12 @@ final class DeserializableParameter implements DeserializableItem
 
     public function getAttribute(): ?Serialize
     {
+        $attributes = $this->parameter->getAttributes(Serialize::class);
+        if (count($attributes) < 1) {
+            return null;
+        }
         /** @noinspection PhpIncompatibleReturnTypeInspection no idea why phpstorm doesn't understand this */
-        return $this->parameter->getAttributes(Serialize::class)[0]?->newInstance() ?? null;
+        return $attributes[0]->newInstance();
     }
 
     public function getType(): ?ReflectionType

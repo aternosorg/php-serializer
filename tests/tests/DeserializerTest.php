@@ -8,7 +8,6 @@ use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use Aternos\Serializer\Json\JsonDeserializer;
-use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\ArrayDeserializerAccessor;
 use Aternos\Serializer\Test\Src\ArrayTests;
 use Aternos\Serializer\Test\Src\BackedEnumTestClass;
@@ -20,6 +19,7 @@ use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
+use Aternos\Serializer\Test\Src\PrivateConstructorParamTestClass;
 use Aternos\Serializer\Test\Src\PrivateTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
@@ -27,8 +27,6 @@ use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
 use Aternos\Serializer\Test\Src\UnionIntersectionTestClass;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 class DeserializerTest extends TestCase
@@ -574,6 +572,14 @@ class DeserializerTest extends TestCase
         $this->expectException(UnsupportedTypeException::class);
         $this->expectExceptionMessage("Unsupported type 'Aternos\Serializer\Test\Src\BadConstructorTestClass' for property '': Required parameter 'x' not annotated as serializable");
         $deserializer->deserialize([]);
+    }
+
+    public function testCreatePrivateConstructorWithArgs(): void
+    {
+        $deserializer = new ArrayDeserializer(PrivateConstructorParamTestClass::class);
+        $result = $deserializer->deserialize(["name" => "test", "age" => 42]);
+        $this->assertEquals("test", $result->getName());
+        $this->assertEquals(42, $result->getAge());
     }
 
     public function testDeserializeClosureThrowsUnsupportedType(): void
