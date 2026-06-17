@@ -3,7 +3,6 @@
 namespace Aternos\Serializer\Test\Tests\Exceptions;
 
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 class SerializationIncorrectTypeExceptionTest extends TestCase

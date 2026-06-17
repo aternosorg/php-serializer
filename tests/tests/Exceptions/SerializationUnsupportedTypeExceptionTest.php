@@ -3,7 +3,6 @@
 namespace Aternos\Serializer\Test\Tests\Exceptions;
 
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 class SerializationUnsupportedTypeExceptionTest extends TestCase

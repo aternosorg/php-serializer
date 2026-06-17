@@ -3,11 +3,7 @@
 namespace Aternos\Serializer\Test\Tests\Json;
 
 use Aternos\Serializer\Json\JsonSerializer;
-use Aternos\Serializer\Serialize;
-use Aternos\Serializer\ArraySerializer;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 class JsonSerializerTest extends TestCase

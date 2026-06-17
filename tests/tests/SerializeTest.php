@@ -6,7 +6,6 @@ use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\Base64Deserializer;
 use Aternos\Serializer\Test\Src\Base64Serializer;
 use Aternos\Serializer\Test\Src\TestClass;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 

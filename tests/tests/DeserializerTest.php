@@ -26,6 +26,7 @@ use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
 use Aternos\Serializer\Test\Src\UnionIntersectionTestClass;
+use Closure;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -44,7 +45,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer("non-existent-class");
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Class 'non-existent-class' does not exist.");
+        $this->expectExceptionMessageIs("Class 'non-existent-class' does not exist.");
         $deserializer->deserialize([]);
     }
 
@@ -77,7 +78,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(MissingPropertyException::class);
-        $this->expectExceptionMessage("Missing property '.name' of type 'string'.");
+        $this->expectExceptionMessageIs("Missing property '.name' of type 'string'.");
         $deserializer->deserialize(["age" => 18]);
     }
 
@@ -92,7 +93,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.age' to be 'int' found: 'eighteen'");
+        $this->expectExceptionMessageIs("Expected '.age' to be 'int' found: 'eighteen'");
         $deserializer->deserialize([
             "name" => "test",
             "age" => "eighteen"
@@ -114,7 +115,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.nullable' to be 'int' found: NULL");
+        $this->expectExceptionMessageIs("Expected '.nullable' to be 'int' found: NULL");
         $deserializer->deserialize([
             "name" => "test",
             "nullable" => null
@@ -147,7 +148,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.boolOrInt' to be 'int|bool' found: 'not-either'");
+        $this->expectExceptionMessageIs("Expected '.boolOrInt' to be 'int|bool' found: 'not-either'");
         $deserializer->deserialize([
             "name" => "test",
             "boolOrInt" => "not-either"
@@ -202,7 +203,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.secondTestClass' to be 'Aternos\Serializer\Test\Src\SecondTestClass' found: 'y'");
+        $this->expectExceptionMessageIs("Expected '.secondTestClass' to be 'Aternos\Serializer\Test\Src\SecondTestClass' found: 'y'");
         $deserializer->deserialize([
             "name" => "test",
             "secondTestClass" => "y"
@@ -213,7 +214,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(IntersectionTestClass::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
+        $this->expectExceptionMessageIs("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
             "x" => "123"
         ]);
@@ -223,7 +224,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(UnionIntersectionTestClass::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
+        $this->expectExceptionMessageIs("Unsupported type 'Throwable&Iterator' for property '.x': Intersection types are not supported");
         $deserializer->deserialize([
             "x" => "123"
         ]);
@@ -481,7 +482,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializerAccessor(TestClass::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'not-a-real-type' for property '.name'");
+        $this->expectExceptionMessageIs("Unsupported type 'not-a-real-type' for property '.name'");
         $deserializer->isBuiltInTypeValid("not-a-real-type", "test", ".name");
     }
 
@@ -507,7 +508,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new JsonDeserializer(CustomSerializerInvalidTypeTestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\BuiltInTypeTestClass::");
+        $this->expectExceptionMessageIsOrContains("Expected '.testClass' to be 'Aternos\Serializer\Test\Src\TestClass' found: \Aternos\Serializer\Test\Src\BuiltInTypeTestClass::");
         $deserializer->deserialize('{"testClass":"Tzo0ODoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXEJ1aWx0SW5UeXBlVGVzdENsYXNzIjo4OntzOjM6ImludCI7TjtzOjU6ImZsb2F0IjtOO3M6Njoic3RyaW5nIjtOO3M6NToiYXJyYXkiO047czo2OiJvYmplY3QiO047czo0OiJzZWxmIjtOO3M6NToiZmFsc2UiO047czo0OiJ0cnVlIjtOO30="}');
     }
 
@@ -521,7 +522,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializerAccessor(EnumTestClass::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'Aternos\Serializer\Test\Src\TestEnum' for property '.enum': Enums must be backed by a scalar type.");
+        $this->expectExceptionMessageIs("Unsupported type 'Aternos\Serializer\Test\Src\TestEnum' for property '.enum': Enums must be backed by a scalar type.");
         $deserializer->deserialize(["enum" => "a"]);
     }
 
@@ -529,7 +530,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializerAccessor(BackedEnumTestClass::class);
         $this->expectException(InvalidEnumBackingException::class);
-        $this->expectExceptionMessage("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 'd'");
+        $this->expectExceptionMessageIs("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 'd'");
         $deserializer->deserialize(["enum" => "d"]);
     }
 
@@ -537,7 +538,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializerAccessor(TestBackedEnum::class);
         $this->expectException(InvalidEnumBackingException::class);
-        $this->expectExceptionMessage("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 0");
+        $this->expectExceptionMessageIs("Invalid backing value for enum 'Aternos\Serializer\Test\Src\TestBackedEnum' expected: type 'string' (a, b, c) found: 0");
         $this->assertEquals(TestBackedEnum::A, $deserializer->deserialize(0));
     }
 
@@ -570,7 +571,7 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(BadConstructorTestClass::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'Aternos\Serializer\Test\Src\BadConstructorTestClass' for property '': Required parameter 'x' not annotated as serializable");
+        $this->expectExceptionMessageIs("Unsupported type 'Aternos\Serializer\Test\Src\BadConstructorTestClass' for property '': Required parameter 'x' not annotated as serializable");
         $deserializer->deserialize([]);
     }
 
@@ -584,9 +585,9 @@ class DeserializerTest extends TestCase
 
     public function testDeserializeClosureThrowsUnsupportedType(): void
     {
-        $deserializer = new ArrayDeserializer(\Closure::class);
+        $deserializer = new ArrayDeserializer(Closure::class);
         $this->expectException(UnsupportedTypeException::class);
-        $this->expectExceptionMessage("Unsupported type 'Closure' for property '': Class Closure is an internal class marked as final that cannot be instantiated without invoking its constructor");
+        $this->expectExceptionMessageIs("Unsupported type 'Closure' for property '': Class Closure is an internal class marked as final that cannot be instantiated without invoking its constructor");
         $deserializer->deserialize([]);
     }
 }

@@ -6,8 +6,6 @@ use Aternos\Serializer\BackedEnumSerializer;
 use Aternos\Serializer\Exceptions\UnsupportedInputObjectException;
 use Aternos\Serializer\Test\Src\TestBackedEnum;
 use Aternos\Serializer\Test\Src\TestClass;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 class BackedEnumSerializerTest extends TestCase
@@ -24,7 +22,7 @@ class BackedEnumSerializerTest extends TestCase
     public function testSerializeInvalidInput()
     {
         $this->expectException(UnsupportedInputObjectException::class);
-        $this->expectExceptionMessage("Unsupported input object 'Aternos\Serializer\Test\Src\TestClass': Only BackedEnum and UnitEnum are supported by EnumSerializer.");
+        $this->expectExceptionMessageIs("Unsupported input object 'Aternos\Serializer\Test\Src\TestClass': Only BackedEnum and UnitEnum are supported by EnumSerializer.");
         $serializer = new BackedEnumSerializer();
         $serializer->serialize(new TestClass());
     }

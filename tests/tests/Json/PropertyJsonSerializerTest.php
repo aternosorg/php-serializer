@@ -2,18 +2,11 @@
 
 namespace Aternos\Serializer\Test\Tests\Json;
 
-use Aternos\Serializer\ArrayDeserializer;
-use Aternos\Serializer\ArraySerializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
-use Aternos\Serializer\Json\JsonDeserializer;
-use Aternos\Serializer\Json\PropertyJsonSerializer;
-use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use JsonException;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
 class PropertyJsonSerializerTest extends TestCase

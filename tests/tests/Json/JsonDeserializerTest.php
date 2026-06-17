@@ -2,13 +2,10 @@
 
 namespace Aternos\Serializer\Test\Tests\Json;
 
-use Aternos\Serializer\ArrayDeserializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Json\JsonDeserializer;
-use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\TestClass;
-use PHPUnit\Framework\Attributes\CoversClass;
-use PHPUnit\Framework\Attributes\UsesClass;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class JsonDeserializerTest extends TestCase
@@ -27,15 +24,15 @@ class JsonDeserializerTest extends TestCase
     {
         $deserializer = new JsonDeserializer(TestClass::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessage("Expected '.' to be 'Aternos\Serializer\Test\Src\TestClass' found: 0");
+        $this->expectExceptionMessageIs("Expected '.' to be 'Aternos\Serializer\Test\Src\TestClass' found: 0");
         $deserializer->deserialize("0");
     }
 
     public function testJsonDeserializerDataIsNotStringOrArray(): void
     {
         $deserializer = new JsonDeserializer(TestClass::class);
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage("Data must be a string or an array.");
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageIs("Data must be a string or an array.");
         $deserializer->deserialize(0);
     }
 }

@@ -4,14 +4,13 @@ namespace Aternos\Serializer\Test\Tests\Exceptions;
 
 use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Test\Src\TestBackedEnum;
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 class InvalidEnumBackingExceptionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $exception = new \Aternos\Serializer\Exceptions\InvalidEnumBackingException(
+        $exception = new InvalidEnumBackingException(
             TestBackedEnum::class,
             "test2",
             "test3",
@@ -22,7 +21,7 @@ class InvalidEnumBackingExceptionTest extends TestCase
 
     public function testGetEnumType(): void
     {
-        $exception = new \Aternos\Serializer\Exceptions\InvalidEnumBackingException(
+        $exception = new InvalidEnumBackingException(
             TestBackedEnum::class,
             "test2",
             "test3",
@@ -33,7 +32,7 @@ class InvalidEnumBackingExceptionTest extends TestCase
 
     public function testGetBackingType(): void
     {
-        $exception = new \Aternos\Serializer\Exceptions\InvalidEnumBackingException(
+        $exception = new InvalidEnumBackingException(
             TestBackedEnum::class,
             "test2",
             "test3",
@@ -44,7 +43,7 @@ class InvalidEnumBackingExceptionTest extends TestCase
 
     public function testGetActualValue(): void
     {
-        $exception = new \Aternos\Serializer\Exceptions\InvalidEnumBackingException(
+        $exception = new InvalidEnumBackingException(
             TestBackedEnum::class,
             "test2",
             "test3",
