@@ -299,6 +299,7 @@ class ArrayDeserializer implements DeserializerInterface
             return $value;
         }
 
+        // The 'self' type is resolved by php in 8.5+: https://3v4l.org/8vfJf
         if ($type->getName() === "self") {
             $deserializer = $this;
         } else {

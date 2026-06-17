@@ -21,6 +21,7 @@ use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\PrivateConstructorParamTestClass;
 use Aternos\Serializer\Test\Src\PrivateTestClass;
+use Aternos\Serializer\Test\Src\RecursiveTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
 use Aternos\Serializer\Test\Src\TestBackedEnum;
@@ -589,5 +590,20 @@ class DeserializerTest extends TestCase
         $this->expectException(UnsupportedTypeException::class);
         $this->expectExceptionMessageIs("Unsupported type 'Closure' for property '': Class Closure is an internal class marked as final that cannot be instantiated without invoking its constructor");
         $deserializer->deserialize([]);
+    }
+
+    public function testDeserializeRecursive(): void
+    {
+        $deserializer = new ArrayDeserializer(RecursiveTestClass::class);
+
+        $root = $deserializer->deserialize(["x" => 1, "next" => ["x" => 2]]);
+        $this->assertInstanceOf(RecursiveTestClass::class, $root);
+        $this->assertEquals(1, $root->getX());
+
+        $next = $root->getNext();
+        $this->assertInstanceOf(RecursiveTestClass::class, $next);
+        $this->assertEquals(2, $next->getX());
+
+        $this->assertNull($next->getNext());
     }
 }
