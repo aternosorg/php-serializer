@@ -12,7 +12,9 @@ use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\ArrayDeserializerAccessor;
 use Aternos\Serializer\Test\Src\ArrayTests;
 use Aternos\Serializer\Test\Src\BackedEnumTestClass;
+use Aternos\Serializer\Test\Src\BadConstructorTestClass;
 use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
+use Aternos\Serializer\Test\Src\ConstructorParamTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerInvalidTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
@@ -34,7 +36,7 @@ class DeserializerTest extends TestCase
     public function testDeserialize(): void
     {
         $deserializer = new ArrayDeserializer(TestClass::class);
-        $testClass = $deserializer->deserialize(["name" => "test", "age" =>18]);
+        $testClass = $deserializer->deserialize(["name" => "test", "age" => 18]);
         $this->assertSame('test', $testClass->getName());
         $this->assertSame(18, $testClass->getAge());
         $this->assertSame('test', $testClass->getNotAJsonField());
@@ -545,5 +547,40 @@ class DeserializerTest extends TestCase
     {
         $deserializer = new ArrayDeserializer(PrivateTestClass::class);
         $this->assertEquals("test", $deserializer->deserialize(["name" => "test"])->getName());
+    }
+
+    public function testConstructorWithArgs(): void
+    {
+        $deserializer = new ArrayDeserializer(ConstructorParamTestClass::class);
+        $result = $deserializer->deserialize([
+            "param" => "a",
+            "promoted" => "b",
+            "nonParam" => "c",
+        ]);
+        $this->assertEquals("a", $result->getParam());
+        $this->assertEquals("b", $result->getPromoted());
+        $this->assertEquals("1", $result->getOptionalParam());
+        $this->assertEquals("2", $result->getOptionalPromoted());
+        $this->assertEquals("c", $result->getNonParam());
+    }
+
+    /**
+     * The constructor of this test class has a required parameter that's not annotated as serializable
+     * @return void
+     */
+    public function testBadConstructor(): void
+    {
+        $deserializer = new ArrayDeserializer(BadConstructorTestClass::class);
+        $this->expectException(UnsupportedTypeException::class);
+        $this->expectExceptionMessage("Unsupported type 'Aternos\Serializer\Test\Src\BadConstructorTestClass' for property '': Required parameter 'x' not annotated as serializable");
+        $deserializer->deserialize([]);
+    }
+
+    public function testDeserializeClosureThrowsUnsupportedType(): void
+    {
+        $deserializer = new ArrayDeserializer(\Closure::class);
+        $this->expectException(UnsupportedTypeException::class);
+        $this->expectExceptionMessage("Unsupported type 'Closure' for property '': Class Closure is an internal class marked as final that cannot be instantiated without invoking its constructor");
+        $deserializer->deserialize([]);
     }
 }

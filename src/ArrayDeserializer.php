@@ -2,10 +2,14 @@
 
 namespace Aternos\Serializer;
 
-use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
-use Aternos\Serializer\Exceptions\SerializationException;
+use Aternos\Serializer\Deserializable\DeserializableItem;
+use Aternos\Serializer\Deserializable\DeserializableParameter;
+use Aternos\Serializer\Deserializable\DeserializableProperty;
+use Aternos\Serializer\Deserializable\OptionalValue;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
+use Aternos\Serializer\Exceptions\InvalidEnumBackingException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
+use Aternos\Serializer\Exceptions\SerializationException;
 use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use InvalidArgumentException;
 use ReflectionClass;
@@ -14,8 +18,8 @@ use ReflectionException;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
 use ReflectionProperty;
+use ReflectionType;
 use ReflectionUnionType;
-use TypeError;
 use ValueError;
 
 /**
@@ -73,16 +77,32 @@ class ArrayDeserializer implements DeserializerInterface
         }
 
         $constructor = $reflectionClass->getConstructor();
-        if ($constructor && !$constructor->isPublic()) {
-            try {
-                $result = $reflectionClass->newInstanceWithoutConstructor();
-                $constructor->invoke($result);
-            } catch (ReflectionException $e) {
-                throw new UnsupportedTypeException($path, $this->class, $e->getMessage(), previous: $e);
+        if ($constructor) {
+            $args = [];
+            foreach ($constructor->getParameters() as $parameter) {
+                $value = $this->deserializeItem($data, $path, new DeserializableParameter($parameter));
+                if ($value->hasValue()) {
+                    $args[] = $value->getValue();
+                } elseif ($parameter->isDefaultValueAvailable()) {
+                    $args[] = $parameter->getDefaultValue();
+                } else {
+                    throw new UnsupportedTypeException($path, $this->class, "Required parameter '" . $parameter->getName() . "' not annotated as serializable");
+                }
+            }
+            if ($constructor->isPublic()) {
+                $result = new $this->class(...$args);
+            } else {
+                try {
+                    $result = $reflectionClass->newInstanceWithoutConstructor();
+                    $constructor->invoke($result, $args);
+                } catch (ReflectionException $e) {
+                    throw new UnsupportedTypeException($path, $this->class, $e->getMessage(), previous: $e);
+                }
             }
         } else {
             $result = new $this->class;
         }
+
 
         foreach ($reflectionClass->getProperties() as $property) {
             $this->deserializeProperty($data, $path, $property, $result);
@@ -110,41 +130,72 @@ class ArrayDeserializer implements DeserializerInterface
         object             $result
     ): void
     {
-        $attribute = Serialize::getAttribute($property);
-        if (!$attribute) {
+        if ($property->isPromoted()) {
+            // Promoted properties mean this object was created with a constructor, so these properties are already set
             return;
         }
 
-        $name = $attribute->getName() ?? $property->getName();
-        $type = $property->getType();
+        $item = $this->deserializeItem(
+            $data,
+            $path,
+            new DeserializableProperty($property)
+        );
+        if ($item->hasValue()) {
+            $value = $item->getValue();
+            $property->setValue($result, $value);
+        }
+    }
+
+    /**
+     * Deserialize a single property or parameter of an object
+     * @param array $data the data to deserialize
+     * @param string $path the path to the data in the base data (used for error messages)
+     * @param DeserializableItem $item the property or parameter to deserialize
+     * @return OptionalValue the deserialized value. If no value is present, it should not be set on the object.
+     * @throws IncorrectTypeException if the type of the property is incorrect
+     * @throws MissingPropertyException if the property is required but missing
+     * @throws UnsupportedTypeException if the type of the property is unsupported
+     * @throws InvalidEnumBackingException if the target class is an enum, but the serialized data is not a valid backing value
+     */
+    protected function deserializeItem(
+        array $data,
+        string $path,
+        DeserializableItem $item,
+    ): OptionalValue
+    {
+        $attribute = $item->getAttribute();
+        if (!$attribute) {
+            return OptionalValue::withoutValue();
+        }
+
+        $name = $attribute->getName() ?? $item->getName();
+        $type = $item->getType();
 
         if (!array_key_exists($name, $data)) {
-            if ($attribute->isRequired() ?? !$property->hasDefaultValue()) {
+            $default = $item->getDefaultValue();
+            if ($attribute->isRequired() ?? !$default->hasValue()) {
                 throw new MissingPropertyException($path . "." . $name, $type?->getName());
             }
 
-            if ($property->hasDefaultValue()) {
-                $property->setValue($result, $property->getDefaultValue());
-                return;
+            if ($default->hasValue()) {
+                return OptionalValue::withoutValue();
             }
 
             if (!$type || $type->allowsNull()) {
-                $property->setValue($result, null);
+                return OptionalValue::withValue(null);
             }
 
             // If there is no default value and the property is not required, we can skip it
-            return;
+            return OptionalValue::withoutValue();
         }
 
         $value = $data[$name];
         if ($customDeserializer = $attribute->getDeserializer()) {
             $value = $customDeserializer->deserialize($value, $path);
-            try {
-                $property->setValue($result, $value);
-            } catch (TypeError) {
-                throw new IncorrectTypeException($path . "." . $name, $type, $value);
+            if ($this->isTypeValid($type, $value, $path)) {
+                return OptionalValue::withValue($value);
             }
-            return;
+            throw new IncorrectTypeException($path . "." . $name, $type, $value);
         }
 
         $nullable = $attribute->allowsNull() ?? $type?->allowsNull() ?? true;
@@ -158,9 +209,9 @@ class ArrayDeserializer implements DeserializerInterface
             }
 
             if (!$type || $type->allowsNull()) {
-                $property->setValue($result, null);
+                return OptionalValue::withValue(null);
             }
-            return;
+            return OptionalValue::withoutValue();
         }
 
         if ($type instanceof ReflectionNamedType) {
@@ -180,7 +231,7 @@ class ArrayDeserializer implements DeserializerInterface
             $value = array_map(fn($item) => $deserializer->deserialize($item, $path . "." . $name), $value);
         }
 
-        $property->setValue($result, $value);
+        return OptionalValue::withValue($value);
     }
 
     /**
@@ -278,6 +329,40 @@ class ArrayDeserializer implements DeserializerInterface
             "true" => $value === true,
             default => throw new UnsupportedTypeException($path, $type),
         };
+    }
+
+    /**
+     * Check if a type is valid
+     * @param ReflectionType $type
+     * @param mixed $value
+     * @param string $path
+     * @return bool true if the type is valid, false otherwise
+     * @throws UnsupportedTypeException if the type of the property is unsupported
+     */
+    protected function isTypeValid(ReflectionType $type, mixed $value, string $path): bool
+    {
+        if ($type instanceof ReflectionNamedType) {
+            if ($type->isBuiltin()) {
+                return $this->isBuiltInTypeValid($type->getName(), $value, $path);
+            }
+            return $value instanceof ($type->getName());
+        } else if ($type instanceof ReflectionUnionType) {
+            foreach ($type->getTypes() as $subType) {
+                if ($this->isTypeValid($subType, $value, $path)) {
+                    return true;
+                }
+            }
+            return false;
+        } else if ($type instanceof ReflectionIntersectionType) {
+            foreach ($type->getTypes() as $subType) {
+                if (!$this->isTypeValid($subType, $value, $path)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            throw new UnsupportedTypeException($path, $type);
+        }
     }
 
     /**

@@ -6,9 +6,9 @@ use Attribute;
 use ReflectionProperty;
 
 /**
- * Used to mark a property for (de-)serialization.
+ * Used to mark a property for (de-)serialization. This can be used on constructor parameters to mark them as deserializable.
  */
-#[Attribute(Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 class Serialize
 {
     public static function getAttribute(ReflectionProperty $property): ?self
@@ -18,6 +18,7 @@ class Serialize
             return null;
         }
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection no idea why phpstorm doesn't understand this */
         return $attribute[0]->newInstance();
     }
 
@@ -30,13 +31,13 @@ class Serialize
      * @param DeserializerInterface|null $deserializer A custom deserializer for this field
      */
     public function __construct(
-        protected ?string $name = null,
-        protected ?bool   $required = null,
-        protected ?bool   $allowNull = null,
-        protected ?string $itemType = null,
-        protected ?SerializerInterface $serializer = null,
+        protected ?string                $name = null,
+        protected ?bool                  $required = null,
+        protected ?bool                  $allowNull = null,
+        protected ?string                $itemType = null,
+        protected ?SerializerInterface   $serializer = null,
         protected ?DeserializerInterface $deserializer = null,
-        protected ?SerializerInterface $itemSerializer = null,
+        protected ?SerializerInterface   $itemSerializer = null,
         protected ?DeserializerInterface $itemDeserializer = null,
     )
     {
