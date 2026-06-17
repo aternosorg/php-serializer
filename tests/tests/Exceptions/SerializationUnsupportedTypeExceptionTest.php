@@ -6,7 +6,6 @@ use Aternos\Serializer\Exceptions\UnsupportedTypeException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnsupportedTypeException::class)]
 class SerializationUnsupportedTypeExceptionTest extends TestCase
 {
     public function testConstruct(): void

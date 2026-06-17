@@ -21,12 +21,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(ArraySerializer::class)]
-#[UsesClass(PropertyJsonSerializer::class)]
-#[UsesClass(Serialize::class)]
-#[UsesClass(IncorrectTypeException::class)]
-#[UsesClass(MissingPropertyException::class)]
-#[UsesClass(BackedEnumSerializer::class)]
 class SerializerTest extends TestCase
 {
     public function testSerialize(): void

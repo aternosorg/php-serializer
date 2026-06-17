@@ -11,10 +11,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(JsonDeserializer::class)]
-#[UsesClass(ArrayDeserializer::class)]
-#[UsesClass(Serialize::class)]
-#[UsesClass(IncorrectTypeException::class)]
 class JsonDeserializerTest extends TestCase
 {
     public function testDeserializeJson(): void

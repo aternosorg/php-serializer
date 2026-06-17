@@ -29,13 +29,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(ArrayDeserializer::class)]
-#[UsesClass(Serialize::class)]
-#[UsesClass(IncorrectTypeException::class)]
-#[UsesClass(MissingPropertyException::class)]
-#[UsesClass(UnsupportedTypeException::class)]
-#[UsesClass(JsonDeserializer::class)]
-#[UsesClass(InvalidEnumBackingException::class)]
 class DeserializerTest extends TestCase
 {
     public function testDeserialize(): void

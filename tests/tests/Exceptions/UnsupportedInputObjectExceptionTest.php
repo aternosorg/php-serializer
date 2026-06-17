@@ -6,7 +6,6 @@ use Aternos\Serializer\Exceptions\UnsupportedInputObjectException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(UnsupportedInputObjectException::class)]
 class UnsupportedInputObjectExceptionTest extends TestCase
 {
     public function testConstruct(): void

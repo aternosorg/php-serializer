@@ -6,7 +6,6 @@ use Aternos\Serializer\Exceptions\MissingPropertyException;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MissingPropertyException::class)]
 class SerializationMissingPropertyExceptionTest extends TestCase
 {
     public function testConstruct(): void

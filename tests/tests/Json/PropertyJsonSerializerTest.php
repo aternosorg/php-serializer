@@ -16,13 +16,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(PropertyJsonSerializer::class)]
-#[UsesClass(ArraySerializer::class)]
-#[UsesClass(ArrayDeserializer::class)]
-#[UsesClass(JsonDeserializer::class)]
-#[UsesClass(Serialize::class)]
-#[UsesClass(IncorrectTypeException::class)]
-#[UsesClass(MissingPropertyException::class)]
 class PropertyJsonSerializerTest extends TestCase
 {
     public function testSerialize(): void

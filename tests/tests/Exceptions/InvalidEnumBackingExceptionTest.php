@@ -7,7 +7,6 @@ use Aternos\Serializer\Test\Src\TestBackedEnum;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(InvalidEnumBackingException::class)]
 class InvalidEnumBackingExceptionTest extends TestCase
 {
     public function testConstruct(): void

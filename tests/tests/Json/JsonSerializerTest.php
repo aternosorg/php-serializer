@@ -10,9 +10,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(JsonSerializer::class)]
-#[UsesClass(Serialize::class)]
-#[UsesClass(ArraySerializer::class)]
 class JsonSerializerTest extends TestCase
 {
     public function testSerializeToJson()
