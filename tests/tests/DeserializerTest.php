@@ -19,8 +19,15 @@ use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\EnumTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
+use Aternos\Serializer\Test\Src\ObjectDeserializer;
+use Aternos\Serializer\Test\Src\ObjectTypedCustomDeserializerTestClass;
 use Aternos\Serializer\Test\Src\PrivateConstructorParamTestClass;
 use Aternos\Serializer\Test\Src\PrivateTestClass;
+use Aternos\Serializer\Test\Src\StringTypedCustomDeserializerTestClass;
+use Aternos\Serializer\Test\Src\ThrowableIterator;
+use Aternos\Serializer\Test\Src\UnionBuiltinCustomDeserializerTestClass;
+use Aternos\Serializer\Test\Src\UnionObjectCustomDeserializerTestClass;
+use Aternos\Serializer\Test\Src\UntypedCustomDeserializerTestClass;
 use Aternos\Serializer\Test\Src\RecursiveTestClass;
 use Aternos\Serializer\Test\Src\SecondTestClass;
 use Aternos\Serializer\Test\Src\SerializerTestClass;
@@ -605,5 +612,61 @@ class DeserializerTest extends TestCase
         $this->assertEquals(2, $next->getX());
 
         $this->assertNull($next->getNext());
+    }
+
+    public function testIsTypeValidNullType(): void
+    {
+        $deserializer = new ArrayDeserializer(UntypedCustomDeserializerTestClass::class);
+        $result = $deserializer->deserialize(["value" => "anything"]);
+        $this->assertInstanceOf(SecondTestClass::class, $result->getValue());
+    }
+
+    public function testIsTypeValidNullValueNullableType(): void
+    {
+        $accessor = new ArrayDeserializerAccessor(RecursiveTestClass::class);
+        $type = (new \ReflectionClass(RecursiveTestClass::class))->getProperty("next")->getType();
+        $this->assertTrue($accessor->isTypeValid($type, null, ""));
+    }
+
+    public function testIsTypeValidBuiltinValid(): void
+    {
+        $deserializer = new ArrayDeserializer(ObjectTypedCustomDeserializerTestClass::class);
+        $result = $deserializer->deserialize(["value" => "anything"]);
+        $this->assertInstanceOf(SecondTestClass::class, $result->getValue());
+    }
+
+    public function testIsTypeValidBuiltinInvalid(): void
+    {
+        $deserializer = new ArrayDeserializer(StringTypedCustomDeserializerTestClass::class);
+        $this->expectException(IncorrectTypeException::class);
+        $deserializer->deserialize(["value" => "anything"]);
+    }
+
+    public function testIsTypeValidUnionValid(): void
+    {
+        $deserializer = new ArrayDeserializer(UnionObjectCustomDeserializerTestClass::class);
+        $result = $deserializer->deserialize(["value" => "anything"]);
+        $this->assertInstanceOf(SecondTestClass::class, $result->getValue());
+    }
+
+    public function testIsTypeValidUnionInvalid(): void
+    {
+        $deserializer = new ArrayDeserializer(UnionBuiltinCustomDeserializerTestClass::class);
+        $this->expectException(IncorrectTypeException::class);
+        $deserializer->deserialize(["value" => "anything"]);
+    }
+
+    public function testIsTypeValidIntersectionValid(): void
+    {
+        $accessor = new ArrayDeserializerAccessor(IntersectionTestClass::class);
+        $type = (new \ReflectionClass(IntersectionTestClass::class))->getProperty("x")->getType();
+        $this->assertTrue($accessor->isTypeValid($type, new ThrowableIterator(), ""));
+    }
+
+    public function testIsTypeValidIntersectionInvalid(): void
+    {
+        $accessor = new ArrayDeserializerAccessor(IntersectionTestClass::class);
+        $type = (new \ReflectionClass(IntersectionTestClass::class))->getProperty("x")->getType();
+        $this->assertFalse($accessor->isTypeValid($type, new \Exception(), ""));
     }
 }
