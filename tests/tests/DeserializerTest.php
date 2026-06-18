@@ -18,6 +18,7 @@ use Aternos\Serializer\Test\Src\CustomSerializerInvalidTypeTestClass;
 use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
 use Aternos\Serializer\Test\Src\DefaultValueTestClass;
 use Aternos\Serializer\Test\Src\EnumTestClass;
+use Aternos\Serializer\Test\Src\IntersectionCustomTestClass;
 use Aternos\Serializer\Test\Src\IntersectionTestClass;
 use Aternos\Serializer\Test\Src\ObjectDeserializer;
 use Aternos\Serializer\Test\Src\ObjectTypedCustomDeserializerTestClass;
@@ -656,17 +657,16 @@ class DeserializerTest extends TestCase
         $deserializer->deserialize(["value" => "anything"]);
     }
 
-    public function testIsTypeValidIntersectionValid(): void
-    {
-        $accessor = new ArrayDeserializerAccessor(IntersectionTestClass::class);
-        $type = (new \ReflectionClass(IntersectionTestClass::class))->getProperty("x")->getType();
-        $this->assertTrue($accessor->isTypeValid($type, new ThrowableIterator(), ""));
-    }
-
     public function testIsTypeValidIntersectionInvalid(): void
     {
         $accessor = new ArrayDeserializerAccessor(IntersectionTestClass::class);
         $type = (new \ReflectionClass(IntersectionTestClass::class))->getProperty("x")->getType();
         $this->assertFalse($accessor->isTypeValid($type, new \Exception(), ""));
+    }
+
+    public function testDeserializeIntersectionCustom(): void
+    {
+        $deserializer = new ArrayDeserializer(IntersectionCustomTestClass::class);
+        $this->assertInstanceOf(IntersectionCustomTestClass::class, $deserializer->deserialize(["x" => []]));
     }
 }

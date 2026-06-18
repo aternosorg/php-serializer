@@ -71,9 +71,6 @@ $example = ExampleClass::tryFromJson('{ "name": "John", "age": 25, "last_name": 
 ```
 
 > [!NOTE]
-> Deserialization is not supported for intersection types as there is no way to determine the correct type.
-
-> [!NOTE]
 > Serialization and deserialization of enums is only supported for backed enums.
 
 If you prefer you can also serialize and deserialize manually.
@@ -104,6 +101,10 @@ If you're using serializable parameters that are stored as properties, you shoul
 for these since this prevents the library from having to deserialize these properties twice.
 
 The visibility of the constructor does not matter. The deserializer can call protected and private constructors.
+
+### Intersection Types
+Interesection types can only be deserialized with a custom deserializer as otherwise the library has no way to find the
+correct class to deserialize into.
 
 ### The Serialize Attribute
 The `Serialize` attribute can be used to configure the serialization of a property.
