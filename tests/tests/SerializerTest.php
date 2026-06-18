@@ -144,7 +144,7 @@ class SerializerTest extends TestCase
     {
         $serializer = new ArraySerializer();
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessageIs("Expected 'enum' to be 'BackedEnum' found: \Aternos\Serializer\Test\Src\TestEnum::A");
+        $this->expectExceptionMessage("Expected 'enum' to be 'BackedEnum' found: \Aternos\Serializer\Test\Src\TestEnum::A");
         $serializer->serialize(new EnumModel());
     }
 

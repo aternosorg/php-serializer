@@ -24,7 +24,7 @@ class JsonDeserializerTest extends TestCase
     {
         $deserializer = new JsonDeserializer(FirstModel::class);
         $this->expectException(IncorrectTypeException::class);
-        $this->expectExceptionMessageIs("Expected '.' to be 'Aternos\Serializer\Test\Src\Models\FirstModel' found: 0");
+        $this->expectExceptionMessage("Expected '.' to be 'Aternos\Serializer\Test\Src\Models\FirstModel' found: 0");
         $deserializer->deserialize("0");
     }
 
@@ -32,7 +32,7 @@ class JsonDeserializerTest extends TestCase
     {
         $deserializer = new JsonDeserializer(FirstModel::class);
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessageIs("Data must be a string or an array.");
+        $this->expectExceptionMessage("Data must be a string or an array.");
         $deserializer->deserialize(0);
     }
 }

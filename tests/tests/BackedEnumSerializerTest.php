@@ -22,7 +22,7 @@ class BackedEnumSerializerTest extends TestCase
     public function testSerializeInvalidInput()
     {
         $this->expectException(UnsupportedInputObjectException::class);
-        $this->expectExceptionMessageIs("Unsupported input object 'Aternos\Serializer\Test\Src\Models\FirstModel': Only BackedEnum and UnitEnum are supported by EnumSerializer.");
+        $this->expectExceptionMessage("Unsupported input object 'Aternos\Serializer\Test\Src\Models\FirstModel': Only BackedEnum and UnitEnum are supported by EnumSerializer.");
         $serializer = new BackedEnumSerializer();
         $serializer->serialize(new FirstModel());
     }
