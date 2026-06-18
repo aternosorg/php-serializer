@@ -1,10 +1,10 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Serialize;
 
-class DefaultValueTestClass
+class DefaultValueModel
 {
     #[Serialize(required: false)]
     public int $intWithDefault = 0;

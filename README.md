@@ -198,8 +198,8 @@ A custom Serializer and Deserializer can be specified for a property.
 This can be useful if you want to serialize a specific property in a different way.
 
 ```php
-#[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class))]
-protected TestClass $example;
+#[Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(Model::class))]
+protected Model $example;
 ```
 
 Note that the custom Deserializer is responsible for returning the correct type.
@@ -210,7 +210,7 @@ If an incompatible type is returned, an IncorrectTypeException is thrown.
 Custom Serializers and Deserializers can also be specified for array items.
 
 ```php
-#[Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(TestClass::class))]
+#[Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(Model::class))]
 protected array $example = [];
 ```
 

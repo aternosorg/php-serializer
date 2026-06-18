@@ -14,7 +14,7 @@ use ReflectionClass;
  * Usage:
  * <code>
  * $serializer = new ArraySerializer();
- * $data = $serializer->serialize(new TestClass());
+ * $data = $serializer->serialize(new Model());
  * $json = json_encode($data);
  * </code>
  *

@@ -1,12 +1,12 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
 use JsonSerializable;
 
-class PrivateTestClass implements JsonSerializable
+class PrivateModel implements JsonSerializable
 {
     use PropertyJsonSerializer;
 

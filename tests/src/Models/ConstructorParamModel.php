@@ -1,10 +1,10 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Serialize;
 
-class ConstructorParamTestClass
+class ConstructorParamModel
 {
     protected string $param;
     protected string $optionalParam;

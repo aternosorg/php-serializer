@@ -9,19 +9,19 @@ class UnsupportedInputObjectExceptionTest extends TestCase
 {
     public function testConstruct(): void
     {
-        $exception = new UnsupportedInputObjectException("TestClass");
-        $this->assertSame("Unsupported input object 'TestClass'", $exception->getMessage());
+        $exception = new UnsupportedInputObjectException("Model");
+        $this->assertSame("Unsupported input object 'Model'", $exception->getMessage());
     }
 
     public function testConstructWithReason(): void
     {
-        $exception = new UnsupportedInputObjectException("TestClass", "test reason");
-        $this->assertSame("Unsupported input object 'TestClass': test reason", $exception->getMessage());
+        $exception = new UnsupportedInputObjectException("Model", "test reason");
+        $this->assertSame("Unsupported input object 'Model': test reason", $exception->getMessage());
     }
 
     public function testGetType(): void
     {
-        $exception = new UnsupportedInputObjectException("TestClass");
-        $this->assertSame("TestClass", $exception->getType());
+        $exception = new UnsupportedInputObjectException("Model");
+        $this->assertSame("Model", $exception->getType());
     }
 }

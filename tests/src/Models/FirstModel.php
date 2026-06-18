@@ -1,12 +1,12 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
 use JsonSerializable;
 
-class TestClass implements JsonSerializable
+class FirstModel implements JsonSerializable
 {
     use PropertyJsonSerializer;
 
@@ -28,7 +28,7 @@ class TestClass implements JsonSerializable
     protected string $notAJsonField = "test";
 
     #[Serialize]
-    protected ?SecondTestClass $secondTestClass = null;
+    protected ?SecondModel $secondModel = null;
 
     #[Serialize]
     protected mixed $mixed = null;
@@ -78,9 +78,9 @@ class TestClass implements JsonSerializable
         return $this->notAJsonField;
     }
 
-    public function getSecondTestClass(): ?SecondTestClass
+    public function getSecondModel(): ?SecondModel
     {
-        return $this->secondTestClass;
+        return $this->secondModel;
     }
 
     public function getMixed(): mixed

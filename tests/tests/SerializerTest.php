@@ -5,108 +5,108 @@ namespace Aternos\Serializer\Test\Tests;
 use Aternos\Serializer\ArraySerializer;
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
-use Aternos\Serializer\Test\Src\ArraySerializeTests;
-use Aternos\Serializer\Test\Src\BackedEnumTestClass;
-use Aternos\Serializer\Test\Src\BuiltInTypeTestClass;
-use Aternos\Serializer\Test\Src\CustomSerializerTestClass;
-use Aternos\Serializer\Test\Src\DefaultValueTestClass;
-use Aternos\Serializer\Test\Src\EnumTestClass;
-use Aternos\Serializer\Test\Src\SecondTestClass;
-use Aternos\Serializer\Test\Src\SerializerTestClass;
-use Aternos\Serializer\Test\Src\TestClass;
+use Aternos\Serializer\Test\Src\Models\ArrayModel;
+use Aternos\Serializer\Test\Src\Models\BackedEnumModel;
+use Aternos\Serializer\Test\Src\Models\BuiltInTypeModel;
+use Aternos\Serializer\Test\Src\Models\CustomSerializerModel;
+use Aternos\Serializer\Test\Src\Models\DefaultValueModel;
+use Aternos\Serializer\Test\Src\Models\EnumModel;
+use Aternos\Serializer\Test\Src\Models\SecondModel;
+use Aternos\Serializer\Test\Src\Models\SerializerModel;
+use Aternos\Serializer\Test\Src\Models\FirstModel;
 use PHPUnit\Framework\TestCase;
 
 class SerializerTest extends TestCase
 {
     public function testSerialize(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
+        $model = new SerializerModel();
+        $model->setName('test');
         $serializer = new ArraySerializer();
         $this->assertSame([
             "name" => "test",
             "age" => 0,
             "notNullable" => "asd",
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 
     public function testSerializeNoName(): void
     {
-        $testClass = new SerializerTestClass();
+        $model = new SerializerModel();
         $serializer = new ArraySerializer();
         $this->expectException(MissingPropertyException::class);
-        $serializer->serialize($testClass);
+        $serializer->serialize($model);
     }
 
     public function testSerializeNotNull(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $testClass->setNotNullable(null);
+        $model = new SerializerModel();
+        $model->setName('test');
+        $model->setNotNullable(null);
         $serializer = new ArraySerializer();
         $this->expectException(IncorrectTypeException::class);
-        $serializer->serialize($testClass);
+        $serializer->serialize($model);
     }
 
     public function testSerializeOtherClass(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $secondClass = new SecondTestClass();
+        $model = new SerializerModel();
+        $model->setName('test');
+        $secondClass = new SecondModel();
         $secondClass->setY(1);
-        $testClass->setSecondTestClass($secondClass);
+        $model->setSecondModel($secondClass);
         $serializer = new ArraySerializer();
         $this->assertSame([
             'name' => 'test',
             'age' => 0,
             'notNullable' => 'asd',
-            'secondTestClass' => [
+            'secondModel' => [
                 'y' => 1,
             ],
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 
     public function testSerializeOtherClassJsonSerializable(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $otherTestClass = new TestClass();
-        $otherTestClass->setName('test');
-        $otherTestClass->setNullable(1);
-        $testClass->setTestClass($otherTestClass);
+        $model = new SerializerModel();
+        $model->setName('test');
+        $otherModel = new FirstModel();
+        $otherModel->setName('test');
+        $otherModel->setNullable(1);
+        $model->setModel($otherModel);
         $serializer = new ArraySerializer();
         $this->assertSame([
             'name' => 'test',
             'age' => 0,
             'notNullable' => 'asd',
-            'testClass' => [
+            'model' => [
                 'name' => 'test',
                 'age' => 0,
                 'changedName' => null,
                 'nullable' => 1,
                 'boolOrInt' => false,
-                'secondTestClass' => null,
+                'secondModel' => null,
                 'mixed' => null,
                 'float' => null,
                 'array' => null,
             ],
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 
-    public function testSerializingDefaultValueTestClass(): void
+    public function testSerializingDefaultValueModel(): void
     {
         $serializer = new ArraySerializer();
-        $testClass = new DefaultValueTestClass();
+        $model = new DefaultValueModel();
         $this->assertSame([
             "intWithDefault" => 0,
             "stringWithDefault" => "",
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 
     public function testSerializeBuiltInTypes(): void
     {
         $serializer = new ArraySerializer();
-        $testClass = new BuiltInTypeTestClass();
+        $model = new BuiltInTypeModel();
         $this->assertSame([
             "int" => null,
             "float" => null,
@@ -116,28 +116,28 @@ class SerializerTest extends TestCase
             "self" => null,
             "false" => null,
             "true" => null,
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 
     public function testCustomSerializer(): void
     {
-        $testClass = new CustomSerializerTestClass();
-        $expected = '{"testClass":"Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","testArray":["Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ==","Tzo0MzoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXFNlY29uZFRlc3RDbGFzcyI6MDp7fQ=="]}';
-        $this->assertEquals($expected, json_encode($testClass));
+        $model = new CustomSerializerModel();
+        $expected = '{"model":"Tzo0NjoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXE1vZGVsc1xTZWNvbmRNb2RlbCI6MDp7fQ==","testArray":["Tzo0NjoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXE1vZGVsc1xTZWNvbmRNb2RlbCI6MDp7fQ==","Tzo0NjoiQXRlcm5vc1xTZXJpYWxpemVyXFRlc3RcU3JjXE1vZGVsc1xTZWNvbmRNb2RlbCI6MDp7fQ=="]}';
+        $this->assertEquals($expected, json_encode($model));
     }
 
     public function testCustomItemSerializerThrowsIfItemIsNotAnObject(): void
     {
-        $testClass = new CustomSerializerTestClass();
-        $testClass->setTestArray([1]);
+        $model = new CustomSerializerModel();
+        $model->setTestArray([1]);
         $this->expectException(IncorrectTypeException::class);
-        json_encode($testClass);
+        json_encode($model);
     }
 
     public function testSerializeBackedEnum(): void
     {
         $serializer = new ArraySerializer();
-        $this->assertEquals(["enum" => "a"], $serializer->serialize(new BackedEnumTestClass()));
+        $this->assertEquals(["enum" => "a"], $serializer->serialize(new BackedEnumModel()));
     }
 
     public function testSerializeUnbackedEnum(): void
@@ -145,17 +145,17 @@ class SerializerTest extends TestCase
         $serializer = new ArraySerializer();
         $this->expectException(IncorrectTypeException::class);
         $this->expectExceptionMessageIs("Expected 'enum' to be 'BackedEnum' found: \Aternos\Serializer\Test\Src\TestEnum::A");
-        $serializer->serialize(new EnumTestClass());
+        $serializer->serialize(new EnumModel());
     }
 
     public function testSerializeArrayItems(): void
     {
         $serializer = new ArraySerializer();
-        $testClass = new ArraySerializeTests();
+        $model = new ArrayModel();
 
-        $testClass->untypedArray = [new BuiltInTypeTestClass()];
-        $testClass->typedArray = [new BuiltInTypeTestClass()];
-        $testClass->array = [new BuiltInTypeTestClass()];
+        $model->untypedArray = [new BuiltInTypeModel()];
+        $model->typedArray = [new BuiltInTypeModel()];
+        $model->array = [new BuiltInTypeModel()];
 
         $this->assertEquals([
             "untypedArray" => [[
@@ -191,6 +191,6 @@ class SerializerTest extends TestCase
             "backedEnumArray" => ["a"],
             "stringArray" => [""],
             "intArray" => [0],
-        ], $serializer->serialize($testClass));
+        ], $serializer->serialize($model));
     }
 }

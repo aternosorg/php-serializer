@@ -27,7 +27,7 @@ use ValueError;
  *
  * Usage:
  * ```php
- * $deserializer = new ArrayDeserializer(TestClass::class);
+ * $deserializer = new ArrayDeserializer(Model::class);
  * $object = $deserializer->deserialize(["name" => "test", "age" => 18]);
  * ```
  *

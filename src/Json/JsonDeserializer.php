@@ -16,7 +16,7 @@ use JsonException;
  *
  * Usage:
  * ```php
- * $deserializer = new JsonDeserializer(TestClass::class);
+ * $deserializer = new JsonDeserializer(Model::class);
  * $object = $deserializer->deserialize('{"name":"test","age":18}');
  * ```
  *

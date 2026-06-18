@@ -1,10 +1,11 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Serialize;
+use Aternos\Serializer\Test\Src\TestEnum;
 
-class EnumTestClass
+class EnumModel
 {
     #[Serialize]
     protected TestEnum $enum = TestEnum::A;

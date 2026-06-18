@@ -4,8 +4,8 @@ namespace Aternos\Serializer\Test\Tests\Json;
 
 use Aternos\Serializer\Exceptions\IncorrectTypeException;
 use Aternos\Serializer\Exceptions\MissingPropertyException;
-use Aternos\Serializer\Test\Src\SecondTestClass;
-use Aternos\Serializer\Test\Src\SerializerTestClass;
+use Aternos\Serializer\Test\Src\Models\SecondModel;
+use Aternos\Serializer\Test\Src\Models\SerializerModel;
 use JsonException;
 use PHPUnit\Framework\TestCase;
 
@@ -13,84 +13,84 @@ class PropertyJsonSerializerTest extends TestCase
 {
     public function testSerialize(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $this->assertSame('{"name":"test","age":0,"notNullable":"asd"}', json_encode($testClass));
+        $model = new SerializerModel();
+        $model->setName('test');
+        $this->assertSame('{"name":"test","age":0,"notNullable":"asd"}', json_encode($model));
     }
 
     public function testSerializeNoName(): void
     {
-        $testClass = new SerializerTestClass();
+        $model = new SerializerModel();
         $this->expectException(MissingPropertyException::class);
-        json_encode($testClass);
+        json_encode($model);
     }
 
     public function testSerializeNotNull(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $testClass->setNotNullable(null);
+        $model = new SerializerModel();
+        $model->setName('test');
+        $model->setNotNullable(null);
         $this->expectException(IncorrectTypeException::class);
-        json_encode($testClass);
+        json_encode($model);
     }
 
     public function testSerializeOtherClass(): void
     {
-        $testClass = new SerializerTestClass();
-        $testClass->setName('test');
-        $secondClass = new SecondTestClass();
+        $model = new SerializerModel();
+        $model->setName('test');
+        $secondClass = new SecondModel();
         $secondClass->setY(1);
-        $testClass->setSecondTestClass($secondClass);
-        $this->assertSame('{"name":"test","age":0,"notNullable":"asd","secondTestClass":{"y":1}}', json_encode($testClass));
+        $model->setSecondModel($secondClass);
+        $this->assertSame('{"name":"test","age":0,"notNullable":"asd","secondModel":{"y":1}}', json_encode($model));
     }
 
     public function testFromJson(): void
     {
-        $testClass = SerializerTestClass::fromJson('{"name":"test","age":0,"notNullable":"asd"}');
-        $this->assertSame("test", $testClass->getName());
-        $this->assertSame(0, $testClass->getAge());
-        $this->assertSame("asd", $testClass->getNotNullable());
+        $model = SerializerModel::fromJson('{"name":"test","age":0,"notNullable":"asd"}');
+        $this->assertSame("test", $model->getName());
+        $this->assertSame(0, $model->getAge());
+        $this->assertSame("asd", $model->getNotNullable());
     }
 
     public function testTryFromJson(): void
     {
-        $testClass = SerializerTestClass::tryFromJson('{"name":"test","age":0,"notNullable":"asd"}');
-        $this->assertNotNull($testClass);
-        $this->assertSame("test", $testClass->getName());
-        $this->assertSame(0, $testClass->getAge());
-        $this->assertSame("asd", $testClass->getNotNullable());
+        $model = SerializerModel::tryFromJson('{"name":"test","age":0,"notNullable":"asd"}');
+        $this->assertNotNull($model);
+        $this->assertSame("test", $model->getName());
+        $this->assertSame(0, $model->getAge());
+        $this->assertSame("asd", $model->getNotNullable());
     }
 
     public function testFromJsonInvalidJson(): void
     {
         $this->expectException(JsonException::class);
-        SerializerTestClass::fromJson('{');
+        SerializerModel::fromJson('{');
     }
 
     public function testTryFromJsonInvalidJson(): void
     {
-        $this->assertNull(SerializerTestClass::tryFromJson('{'));
+        $this->assertNull(SerializerModel::tryFromJson('{'));
     }
 
     public function testFromJsonMissingProperty(): void
     {
         $this->expectException(MissingPropertyException::class);
-        SerializerTestClass::fromJson('{}');
+        SerializerModel::fromJson('{}');
     }
 
     public function testTryFromJsonMissingProperty(): void
     {
-        $this->assertNull(SerializerTestClass::tryFromJson('{}'));
+        $this->assertNull(SerializerModel::tryFromJson('{}'));
     }
 
     public function testFromJsonIncorrectType(): void
     {
         $this->expectException(IncorrectTypeException::class);
-        SerializerTestClass::fromJson('{"name":1}');
+        SerializerModel::fromJson('{"name":1}');
     }
 
     public function testTryFromJsonIncorrectType(): void
     {
-        $this->assertNull(SerializerTestClass::tryFromJson('{"name":1}'));
+        $this->assertNull(SerializerModel::tryFromJson('{"name":1}'));
     }
 }

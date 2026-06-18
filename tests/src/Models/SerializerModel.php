@@ -1,12 +1,12 @@
 <?php
 
-namespace Aternos\Serializer\Test\Src;
+namespace Aternos\Serializer\Test\Src\Models;
 
 use Aternos\Serializer\Json\PropertyJsonSerializer;
 use Aternos\Serializer\Serialize;
 use JsonSerializable;
 
-class SerializerTestClass implements JsonSerializable
+class SerializerModel implements JsonSerializable
 {
     use PropertyJsonSerializer;
 
@@ -26,10 +26,10 @@ class SerializerTestClass implements JsonSerializable
     public string $nullable;
 
     #[Serialize(required: false)]
-    protected ?SecondTestClass $secondTestClass;
+    protected ?SecondModel $secondModel;
 
     #[Serialize(required: false)]
-    protected ?TestClass $testClass;
+    protected ?FirstModel $model;
 
     public function getName(): string
     {
@@ -56,18 +56,18 @@ class SerializerTestClass implements JsonSerializable
         $this->notNullable = $notNullable;
     }
 
-    public function getSecondTestClass(): ?SecondTestClass
+    public function getSecondModel(): ?SecondModel
     {
-        return $this->secondTestClass;
+        return $this->secondModel;
     }
 
-    public function setSecondTestClass(?SecondTestClass $secondTestClass): void
+    public function setSecondModel(?SecondModel $secondModel): void
     {
-        $this->secondTestClass = $secondTestClass;
+        $this->secondModel = $secondModel;
     }
 
-    public function setTestClass(?TestClass $testClass): void
+    public function setModel(?FirstModel $model): void
     {
-        $this->testClass = $testClass;
+        $this->model = $model;
     }
 }

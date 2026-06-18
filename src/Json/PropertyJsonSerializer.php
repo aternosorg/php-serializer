@@ -14,7 +14,7 @@ use JsonException;
  *
  * Usage:
  * <code>
- * class TestClass implements \JsonSerializable
+ * class Model implements \JsonSerializable
  * {
  *   use PropertyJsonSerializer;
  *

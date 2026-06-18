@@ -5,7 +5,7 @@ namespace Aternos\Serializer\Test\Tests;
 use Aternos\Serializer\Serialize;
 use Aternos\Serializer\Test\Src\Base64Deserializer;
 use Aternos\Serializer\Test\Src\Base64Serializer;
-use Aternos\Serializer\Test\Src\TestClass;
+use Aternos\Serializer\Test\Src\Models\FirstModel;
 use PHPUnit\Framework\TestCase;
 use ReflectionProperty;
 
@@ -70,13 +70,13 @@ class SerializeTest extends TestCase
 
     public function testGetItemType(): void
     {
-        $property = new Serialize(itemType: TestClass::class);
-        $this->assertSame(TestClass::class, $property->getItemType());
+        $property = new Serialize(itemType: FirstModel::class);
+        $this->assertSame(FirstModel::class, $property->getItemType());
     }
 
     public function testGetCustomSerializerAndDeserializer(): void
     {
-        $attribute = new Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(TestClass::class));
+        $attribute = new Serialize(serializer: new Base64Serializer(), deserializer: new Base64Deserializer(FirstModel::class));
         $this->assertNotNull($attribute);
         $this->assertInstanceOf(Base64Serializer::class, $attribute->getSerializer());
         $this->assertInstanceOf(Base64Deserializer::class, $attribute->getDeserializer());
@@ -84,7 +84,7 @@ class SerializeTest extends TestCase
 
     public function testGetCustomItemSerializerAndDeserializer(): void
     {
-        $attribute = new Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(TestClass::class));
+        $attribute = new Serialize(itemSerializer: new Base64Serializer(), itemDeserializer: new Base64Deserializer(FirstModel::class));
         $this->assertInstanceOf(Base64Serializer::class, $attribute->getItemSerializer());
         $this->assertInstanceOf(Base64Deserializer::class, $attribute->getItemDeserializer());
     }

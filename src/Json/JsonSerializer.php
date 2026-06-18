@@ -13,7 +13,7 @@ use Aternos\Serializer\SerializerInterface;
  * Usage:
  * <code>
  * $serializer = new JsonSerializer();
- * $json = $serializer->serialize(new TestClass());
+ * $json = $serializer->serialize(new Model());
  * </code>
  *
  * @see ArraySerializer
